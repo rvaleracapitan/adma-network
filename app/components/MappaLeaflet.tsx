@@ -22,19 +22,38 @@ interface Props {
 export default function MappaLeaflet({ groups, myGroupId, onSelectGroup }: Props) {
   const mapRef = useRef<any>(null)
   const containerRef = useRef<HTMLDivElement>(null)
+  const markersRef = useRef<any[]>([])
 
   useEffect(() => {
     if (!containerRef.current) return
     if (mapRef.current) return
 
     import('leaflet').then(L => {
-      import('leaflet/dist/leaflet.css' as any)
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'
+      document.head.appendChild(link)
 
       mapRef.current = L.map(containerRef.current!).setView([20, 10], 2)
-
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap'
       }).addTo(mapRef.current)
+    })
+
+    return () => {
+      if (mapRef.current) {
+        mapRef.current.remove()
+        mapRef.current = null
+      }
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!mapRef.current || groups.length === 0) return
+
+    import('leaflet').then(L => {
+      markersRef.current.forEach(m => m.remove())
+      markersRef.current = []
 
       groups.forEach(g => {
         if (!g.lat || !g.lng) return
@@ -57,15 +76,9 @@ export default function MappaLeaflet({ groups, myGroupId, onSelectGroup }: Props
           </div>
         `)
         marker.on('click', () => onSelectGroup(g))
+        markersRef.current.push(marker)
       })
     })
-
-    return () => {
-      if (mapRef.current) {
-        mapRef.current.remove()
-        mapRef.current = null
-      }
-    }
   }, [groups, myGroupId])
 
   return <div ref={containerRef} style={{ width: '100%', height: '100%' }} />
