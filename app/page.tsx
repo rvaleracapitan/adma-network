@@ -8,10 +8,12 @@ export default function Home() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-  async function handleLogin() {
+ async function handleLogin() {
     setLoading(true)
     setError('')
     const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+    console.log('data:', data)
+    console.log('error:', error)
     if (error) {
       setError('Email o password non corretti.')
       setLoading(false)
