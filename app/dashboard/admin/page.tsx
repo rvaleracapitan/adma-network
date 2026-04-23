@@ -36,39 +36,14 @@ export default function Admin() {
     setRinnovi(rin || [])
   }
 
-  async function approvaRegistrazione(r: any) {
-    // 1. Crea utente auth
-    const tempPassword = 'ADMA' + Math.random().toString(36).slice(2, 8).toUpperCase() + '!'
-    const { data: authData, error: authError } = await supabase.auth.admin.createUser({
-      email: r.email,
-      password: tempPassword,
-      email_confirm: true,
-    })
-    if (authError) { alert('Errore creazione account: ' + authError.message); return; }
-
-    // 2. Crea gruppo
-    await supabase.from('groups').insert({
-      user_id: authData.user.id,
-      nome: r.nome,
-      paese: r.paese,
-      citta: r.citta,
-      numero_erezione: r.numero_erezione,
-      numero_aggregazione: r.numero_aggregazione,
-      data_aggregazione_originale: r.data_aggregazione_originale,
-      referente: r.referente,
-      email: r.email,
-      telefono: r.telefono,
-      numero_membri: r.numero_membri,
-      scadenza: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split('T')[0],
-      is_primaria: false,
-    })
-
-    // 3. Aggiorna stato richiesta
-    await supabase.from('registration_requests').update({ stato: 'approved', reviewed_at: new Date().toISOString() }).eq('id', r.id)
-
-    alert(`Approvato! Credenziali inviate a ${r.email}\nPassword temporanea: ${tempPassword}`)
-    await loadData()
-  }
+  aasync function approvaRegistrazione(r: any) {
+  const { data, error } = await supabase.functions.invoke('approva-registrazione', {
+    body: { registrazione_id: r.id }
+  })
+  if (error) { alert('Errore: ' + error.message); return; }
+  alert(`Approvato!\nEmail: ${data.email}\nPassword temporanea: ${data.password}`)
+  await loadData()
+}
 
   async function rifiutaRegistrazione(id: string) {
     await supabase.from('registration_requests').update({ stato: 'rejected', reviewed_at: new Date().toISOString() }).eq('id', id)
