@@ -11,8 +11,13 @@ export default function Home() {
   async function handleLogin() {
     setLoading(true)
     setError('')
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
-    if (error) setError('Email o password non corretti.')
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+    if (error) {
+      setError('Email o password non corretti.')
+      setLoading(false)
+      return
+    }
+    window.location.href = '/dashboard'
     setLoading(false)
   }
 
