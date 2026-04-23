@@ -19,7 +19,7 @@ export default function Home() {
       setLoading(false)
       return
     }
-    window.location.href = '/dashboard'
+    window.location.href = '/dashboard/mappa'
     setLoading(false)
   }
 
