@@ -123,10 +123,10 @@ export default function Mappa() {
         {view === 'mappa' && (
           <div style={{ height: 340, borderRadius: 12, overflow: 'hidden', border: '0.5px solid #e5e5e5', marginBottom: '0.75rem' }}>
             <MappaLeaflet
-              groups={filtered}
-              myGroupId={myGroup?.id}
-              onSelectGroup={(g) => setChatGroup(g)}
-            />
+  groups={groups}
+  searchTerm={search}
+  onSelectGroup={(g) => setChatGroup(g)}
+/>
           </div>
         )}
 
