@@ -36,7 +36,7 @@ export default function Admin() {
     setRinnovi(rin || [])
   }
 
-  aasync function approvaRegistrazione(r: any) {
+  async function approvaRegistrazione(r: any) {
   const { data, error } = await supabase.functions.invoke('approva-registrazione', {
     body: { registrazione_id: r.id }
   })
