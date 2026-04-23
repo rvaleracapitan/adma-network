@@ -1,0 +1,171 @@
+'use client'
+import { useState } from 'react'
+import { supabase } from '../../lib/supabase'
+
+export default function Registrazione() {
+  const [sending, setSending] = useState(false)
+  const [sent, setSent] = useState(false)
+  const [error, setError] = useState('')
+  const [form, setForm] = useState({
+    nome: '',
+    paese: '',
+    citta: '',
+    numero_erezione: '',
+    numero_aggregazione: '',
+    data_aggregazione_originale: '',
+    referente: '',
+    email: '',
+    telefono: '',
+    numero_membri: '',
+  })
+
+  function update(field: string, value: string) {
+    setForm(f => ({ ...f, [field]: value }))
+  }
+
+  async function handleSubmit() {
+    if (!form.nome || !form.paese || !form.numero_erezione || !form.numero_aggregazione || !form.data_aggregazione_originale || !form.referente || !form.email) {
+      setError('Compila tutti i campi obbligatori (*).')
+      return
+    }
+    setSending(true)
+    setError('')
+    const { error } = await supabase.from('registration_requests').insert({
+      ...form,
+      numero_membri: form.numero_membri ? parseInt(form.numero_membri) : null,
+    })
+    if (error) {
+      setError('Errore durante l\'invio. Riprova.')
+      setSending(false)
+      return
+    }
+    setSent(true)
+    setSending(false)
+  }
+
+  const inputStyle = {
+    width: '100%',
+    padding: '9px 12px',
+    fontSize: 14,
+    border: '0.5px solid #ddd',
+    borderRadius: 8,
+    boxSizing: 'border-box' as const,
+  }
+
+  const labelStyle = {
+    display: 'block' as const,
+    fontSize: 13,
+    color: '#888',
+    marginBottom: 4,
+  }
+
+  return (
+    <main style={{ minHeight: '100vh', background: '#f9f9f7', padding: '1.5rem' }}>
+      <div style={{ maxWidth: 520, margin: '0 auto' }}>
+
+        {/* Logo */}
+        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+          <div style={{ width: 52, height: 52, borderRadius: '50%', background: '#EEEDFE', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, color: '#534AB7', fontWeight: 500, margin: '0 auto 10px' }}>A</div>
+          <div style={{ fontSize: 20, fontWeight: 500 }}>Richiesta di aggregazione</div>
+          <div style={{ fontSize: 13, color: '#888', marginTop: 4 }}>Compila il modulo per richiedere l'aggregazione alla Primaria di Valdocco</div>
+        </div>
+
+        {!sent ? (
+          <div style={{ background: 'white', border: '0.5px solid #e5e5e5', borderRadius: 12, padding: '1.5rem' }}>
+
+            {error && (
+              <div style={{ background: '#FCEBEB', border: '0.5px solid #F7C1C1', color: '#A32D2D', borderRadius: 8, padding: '0.6rem 0.85rem', fontSize: 13, marginBottom: '1rem' }}>
+                {error}
+              </div>
+            )}
+
+            {/* Dati identificativi */}
+            <div style={{ fontSize: 11, fontWeight: 500, color: '#888', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.6rem', paddingBottom: '0.4rem', borderBottom: '0.5px solid #e5e5e5' }}>
+              Dati identificativi — non modificabili dopo l'approvazione
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: '0.8rem' }}>
+              <div>
+                <label style={labelStyle}>Nome del gruppo *</label>
+                <input style={inputStyle} value={form.nome} onChange={e => update('nome', e.target.value)} placeholder="es. ADMA Barcellona" />
+              </div>
+              <div>
+                <label style={labelStyle}>Paese *</label>
+                <input style={inputStyle} value={form.paese} onChange={e => update('paese', e.target.value)} placeholder="es. Spagna" />
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: '0.8rem' }}>
+              <div>
+                <label style={labelStyle}>N. di Erezione *</label>
+                <input style={inputStyle} value={form.numero_erezione} onChange={e => update('numero_erezione', e.target.value)} placeholder="es. ES-2024-001" />
+              </div>
+              <div>
+                <label style={labelStyle}>N. di aggregazione *</label>
+                <input style={inputStyle} value={form.numero_aggregazione} onChange={e => update('numero_aggregazione', e.target.value)} placeholder="es. 2024-047" />
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: '1.25rem' }}>
+              <div>
+                <label style={labelStyle}>Città</label>
+                <input style={inputStyle} value={form.citta} onChange={e => update('citta', e.target.value)} placeholder="es. Barcellona" />
+              </div>
+              <div>
+                <label style={labelStyle}>Data aggregazione originale *</label>
+                <input type="date" style={inputStyle} value={form.data_aggregazione_originale} onChange={e => update('data_aggregazione_originale', e.target.value)} />
+              </div>
+            </div>
+
+            {/* Dati contatto */}
+            <div style={{ fontSize: 11, fontWeight: 500, color: '#888', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.6rem', paddingBottom: '0.4rem', borderBottom: '0.5px solid #e5e5e5' }}>
+              Referente e contatti — aggiornabili ad ogni rinnovo
+            </div>
+
+            <div style={{ marginBottom: '0.8rem' }}>
+              <label style={labelStyle}>Referente / Responsabile *</label>
+              <input style={inputStyle} value={form.referente} onChange={e => update('referente', e.target.value)} placeholder="Nome e cognome" />
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: '0.8rem' }}>
+              <div>
+                <label style={labelStyle}>Email del gruppo *</label>
+                <input type="email" style={inputStyle} value={form.email} onChange={e => update('email', e.target.value)} placeholder="email@esempio.com" />
+              </div>
+              <div>
+                <label style={labelStyle}>Telefono</label>
+                <input style={inputStyle} value={form.telefono} onChange={e => update('telefono', e.target.value)} placeholder="+1 ..." />
+              </div>
+            </div>
+
+            <div style={{ marginBottom: '1.25rem' }}>
+              <label style={labelStyle}>Numero di membri *</label>
+              <input type="number" style={inputStyle} value={form.numero_membri} onChange={e => update('numero_membri', e.target.value)} placeholder="es. 30" min="1" />
+            </div>
+
+            <div style={{ background: '#f5f5f3', borderRadius: 8, padding: '0.7rem 0.9rem', fontSize: 12, color: '#888', marginBottom: '1rem' }}>
+              Dopo l'approvazione della Primaria riceverete via email le credenziali di accesso (email + password). L'aggregazione sarà valida per 12 mesi.
+            </div>
+
+            <button onClick={handleSubmit} disabled={sending}
+              style={{ width: '100%', background: '#1a1a1a', color: 'white', border: 'none', padding: 10, borderRadius: 8, fontSize: 14, fontWeight: 500, cursor: sending ? 'not-allowed' : 'pointer', opacity: sending ? 0.7 : 1 }}>
+              {sending ? 'Invio in corso...' : 'Invia richiesta di aggregazione'}
+            </button>
+
+            <div style={{ textAlign: 'center', marginTop: '1rem', fontSize: 13, color: '#888' }}>
+              Hai già un account? <a href="/" style={{ color: '#185FA5', textDecoration: 'underline' }}>Accedi</a>
+            </div>
+          </div>
+        ) : (
+          <div style={{ background: '#EAF3DE', border: '0.5px solid #9FE1CB', borderRadius: 12, padding: '1.5rem', fontSize: 14, color: '#3B6D11' }}>
+            <div style={{ fontWeight: 500, marginBottom: 6 }}>Richiesta inviata con successo!</div>
+            La domanda è stata trasmessa alla Primaria di Valdocco. Riceverete le credenziali di accesso via email una volta approvata.
+            <div style={{ marginTop: '1rem' }}>
+              <a href="/" style={{ color: '#3B6D11', fontSize: 13 }}>← Torna al login</a>
+            </div>
+          </div>
+        )}
+      </div>
+    </main>
+  )
+}
