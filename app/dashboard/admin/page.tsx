@@ -37,10 +37,18 @@ export default function Admin() {
   }
 
   async function approvaRegistrazione(r: any) {
-  const { data, error } = await supabase.functions.invoke('approva-registrazione', {
-    body: { registrazione_id: r.id }
+  const { data: { session } } = await supabase.auth.getSession()
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/approva-registrazione`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${session?.access_token}`,
+      'apikey': process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    },
+    body: JSON.stringify({ registrazione_id: r.id })
   })
-  if (error) { alert('Errore: ' + error.message); return; }
+  const data = await res.json()
+  if (!res.ok) { alert('Errore: ' + data.error); return; }
   alert(`Approvato!\nEmail: ${data.email}\nPassword temporanea: ${data.password}`)
   await loadData()
 }
