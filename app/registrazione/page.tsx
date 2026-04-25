@@ -28,7 +28,7 @@ export default function Registrazione() {
   }
 
   async function handleSubmit() {
-    if (!form.nome || !form.citta || !form.paese || !form.numero_erezione || !form.data_erezione || !form.numero_aggregazione || !form.data_aggregazione_originale || !form.nome_presidente || !form.cognome_presidente || !form.nome_animatore || !form.cognome_animatore || !form.email) {
+    if (!form.nome || !form.citta || !form.paese || !form.numero_erezione || !form.data_erezione || !form.numero_aggregazione || !form.data_aggregazione_originale || !form.nome_presidente || !form.cognome_presidente || !form.nome_animatore || !form.cognome_animatore || !form.email || !form.numero_membri) {
       setError('Compila tutti i campi obbligatori (*).')
       return
     }
@@ -93,8 +93,8 @@ export default function Registrazione() {
 
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
           <div style={{ width: 52, height: 52, borderRadius: '50%', background: '#EEEDFE', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, color: '#534AB7', fontWeight: 500, margin: '0 auto 10px' }}>A</div>
-          <div style={{ fontSize: 20, fontWeight: 500 }}>Richiesta di aggregazione</div>
-          <div style={{ fontSize: 13, color: '#888', marginTop: 4 }}>Compila il modulo per richiedere l'aggregazione alla Primaria di Valdocco</div>
+          <div style={{ fontSize: 20, fontWeight: 500 }}>Richiesta di registrazione</div>
+          <div style={{ fontSize: 13, color: '#888', marginTop: 4 }}>Compila il modulo per richiedere la registrazione alla Primaria di Valdocco</div>
         </div>
 
         {!sent ? (
@@ -137,7 +137,7 @@ export default function Registrazione() {
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: '0.8rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 <div>
                   <label style={labelStyle}>N. di aggregazione *</label>
                   <input style={inputStyle} value={form.numero_aggregazione} onChange={e => update('numero_aggregazione', e.target.value)} placeholder="es. 2024-047" />
@@ -149,11 +149,11 @@ export default function Registrazione() {
               </div>
             </div>
 
-            {/* Responsabili */}
+            {/* Responsabili e contatti */}
             <div style={{ marginBottom: '1.25rem' }}>
-              <div style={sectionTitle}>Responsabili del gruppo</div>
+              <div style={sectionTitle}>Responsabili e contatti — aggiornabili ad ogni rinnovo</div>
 
-              <div style={{ marginBottom: '0.5rem', fontSize: 12, color: '#888' }}>Presidente</div>
+              <div style={{ marginBottom: '0.5rem', fontSize: 12, color: '#555', fontWeight: 500 }}>Presidente</div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: '0.8rem' }}>
                 <div>
                   <label style={labelStyle}>Nome *</label>
@@ -165,7 +165,7 @@ export default function Registrazione() {
                 </div>
               </div>
 
-              <div style={{ marginBottom: '0.5rem', fontSize: 12, color: '#888' }}>Animatore spirituale locale</div>
+              <div style={{ marginBottom: '0.5rem', fontSize: 12, color: '#555', fontWeight: 500 }}>Animatore spirituale locale</div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: '0.8rem' }}>
                 <div>
                   <label style={labelStyle}>Nome *</label>
@@ -176,11 +176,6 @@ export default function Registrazione() {
                   <input style={inputStyle} value={form.cognome_animatore} onChange={e => update('cognome_animatore', e.target.value)} placeholder="Cognome" />
                 </div>
               </div>
-            </div>
-
-            {/* Contatti */}
-            <div style={{ marginBottom: '1.25rem' }}>
-              <div style={sectionTitle}>Contatti — aggiornabili ad ogni rinnovo</div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: '0.8rem' }}>
                 <div>
@@ -193,7 +188,7 @@ export default function Registrazione() {
                 </div>
               </div>
 
-              <div style={{ marginBottom: '0.8rem' }}>
+              <div>
                 <label style={labelStyle}>Numero di membri *</label>
                 <input type="number" style={inputStyle} value={form.numero_membri} onChange={e => update('numero_membri', e.target.value)} placeholder="es. 30" min="1" />
               </div>
@@ -205,7 +200,7 @@ export default function Registrazione() {
 
             <button onClick={handleSubmit} disabled={sending}
               style={{ width: '100%', background: '#1a1a1a', color: 'white', border: 'none', padding: 10, borderRadius: 8, fontSize: 14, fontWeight: 500, cursor: sending ? 'not-allowed' : 'pointer', opacity: sending ? 0.7 : 1 }}>
-              {sending ? 'Invio in corso...' : 'Invia richiesta di aggregazione'}
+              {sending ? 'Invio in corso...' : 'Invia richiesta di registrazione'}
             </button>
 
             <div style={{ textAlign: 'center', marginTop: '1rem', fontSize: 13, color: '#888' }}>

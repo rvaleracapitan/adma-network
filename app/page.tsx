@@ -67,8 +67,8 @@ export default function Home() {
           </button>
         </div>
         <div style={{ textAlign: 'center', marginTop: '1rem', fontSize: 13, color: '#888' }}>
-          Nuovo gruppo?{' '}
-          <a href="/registrazione" style={{ color: '#185FA5', textDecoration: 'underline' }}>Richiedi aggregazione</a>
+Gruppo non registrato nel network?{' '}
+<a href="/registrazione" style={{ color: '#185FA5', textDecoration: 'underline' }}>Richiedi registrazione</a>
         </div>
       </div>
     </main>
