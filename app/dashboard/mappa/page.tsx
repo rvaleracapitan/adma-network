@@ -81,6 +81,7 @@ export default function Mappa() {
             </div>
           </div>
           <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+            <a href="/dashboard/messaggi" style={{ fontSize: 12, color: '#185FA5', textDecoration: 'underline' }}>Messaggi</a>
             <a href="/dashboard/rinnovo" style={{ fontSize: 12, color: '#185FA5', textDecoration: 'underline' }}>Rinnovo</a>
             {myGroup?.is_primaria && <a href="/dashboard/admin" style={{ fontSize: 12, color: '#185FA5', textDecoration: 'underline' }}>Admin</a>}
             <button onClick={async () => { await supabase.auth.signOut(); window.location.href = '/' }} style={{ background: 'none', border: 'none', color: '#888', fontSize: 12, cursor: 'pointer', textDecoration: 'underline' }}>Esci</button>

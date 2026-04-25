@@ -6,6 +6,22 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
+async function geocode(citta: string, paese: string): Promise<{ lat: number, lng: number } | null> {
+  try {
+    const query = encodeURIComponent(`${citta}, ${paese}`)
+    const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${query}&format=json&limit=1`, {
+      headers: { 'User-Agent': 'ADMA-Network/1.0' }
+    })
+    const data = await res.json()
+    if (data.length > 0) {
+      return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) }
+    }
+  } catch (e) {
+    console.error('Geocoding error:', e)
+  }
+  return null
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
@@ -40,6 +56,8 @@ serve(async (req) => {
     const scadenza = new Date()
     scadenza.setFullYear(scadenza.getFullYear() + 1)
 
+    const coords = await geocode(r.citta || r.paese, r.paese)
+
     await supabase.from('groups').insert({
       user_id: authData.user.id,
       nome: r.nome,
@@ -53,6 +71,8 @@ serve(async (req) => {
       telefono: r.telefono,
       numero_membri: r.numero_membri,
       scadenza: scadenza.toISOString().split('T')[0],
+      lat: coords?.lat || null,
+      lng: coords?.lng || null,
       is_primaria: false,
     })
 
