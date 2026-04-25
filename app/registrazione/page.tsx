@@ -8,12 +8,16 @@ export default function Registrazione() {
   const [error, setError] = useState('')
   const [form, setForm] = useState({
     nome: '',
-    paese: '',
     citta: '',
+    paese: '',
     numero_erezione: '',
+    data_erezione: '',
     numero_aggregazione: '',
     data_aggregazione_originale: '',
-    referente: '',
+    nome_presidente: '',
+    cognome_presidente: '',
+    nome_animatore: '',
+    cognome_animatore: '',
     email: '',
     telefono: '',
     numero_membri: '',
@@ -24,14 +28,27 @@ export default function Registrazione() {
   }
 
   async function handleSubmit() {
-    if (!form.nome || !form.paese || !form.numero_erezione || !form.numero_aggregazione || !form.data_aggregazione_originale || !form.referente || !form.email) {
+    if (!form.nome || !form.citta || !form.paese || !form.numero_erezione || !form.data_erezione || !form.numero_aggregazione || !form.data_aggregazione_originale || !form.nome_presidente || !form.cognome_presidente || !form.nome_animatore || !form.cognome_animatore || !form.email) {
       setError('Compila tutti i campi obbligatori (*).')
       return
     }
     setSending(true)
     setError('')
     const { error } = await supabase.from('registration_requests').insert({
-      ...form,
+      nome: form.nome,
+      citta: form.citta,
+      paese: form.paese,
+      numero_erezione: form.numero_erezione,
+      data_erezione: form.data_erezione,
+      numero_aggregazione: form.numero_aggregazione,
+      data_aggregazione_originale: form.data_aggregazione_originale,
+      referente: `${form.nome_presidente} ${form.cognome_presidente}`,
+      nome_presidente: form.nome_presidente,
+      cognome_presidente: form.cognome_presidente,
+      nome_animatore: form.nome_animatore,
+      cognome_animatore: form.cognome_animatore,
+      email: form.email,
+      telefono: form.telefono,
       numero_membri: form.numero_membri ? parseInt(form.numero_membri) : null,
     })
     if (error) {
@@ -59,11 +76,21 @@ export default function Registrazione() {
     marginBottom: 4,
   }
 
+  const sectionTitle = {
+    fontSize: 11,
+    fontWeight: 500,
+    color: '#888',
+    textTransform: 'uppercase' as const,
+    letterSpacing: '0.05em',
+    marginBottom: '0.6rem',
+    paddingBottom: '0.4rem',
+    borderBottom: '0.5px solid #e5e5e5',
+  }
+
   return (
     <main style={{ minHeight: '100vh', background: '#f9f9f7', padding: '1.5rem' }}>
       <div style={{ maxWidth: 520, margin: '0 auto' }}>
 
-        {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
           <div style={{ width: 52, height: 52, borderRadius: '50%', background: '#EEEDFE', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, color: '#534AB7', fontWeight: 500, margin: '0 auto 10px' }}>A</div>
           <div style={{ fontSize: 20, fontWeight: 500 }}>Richiesta di aggregazione</div>
@@ -80,67 +107,96 @@ export default function Registrazione() {
             )}
 
             {/* Dati identificativi */}
-            <div style={{ fontSize: 11, fontWeight: 500, color: '#888', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.6rem', paddingBottom: '0.4rem', borderBottom: '0.5px solid #e5e5e5' }}>
-              Dati identificativi — non modificabili dopo l'approvazione
-            </div>
+            <div style={{ marginBottom: '1.25rem' }}>
+              <div style={sectionTitle}>Dati identificativi — non modificabili dopo l'approvazione</div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: '0.8rem' }}>
-              <div>
+              <div style={{ marginBottom: '0.8rem' }}>
                 <label style={labelStyle}>Nome del gruppo *</label>
                 <input style={inputStyle} value={form.nome} onChange={e => update('nome', e.target.value)} placeholder="es. ADMA Barcellona" />
               </div>
-              <div>
-                <label style={labelStyle}>Paese *</label>
-                <input style={inputStyle} value={form.paese} onChange={e => update('paese', e.target.value)} placeholder="es. Spagna" />
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: '0.8rem' }}>
+                <div>
+                  <label style={labelStyle}>Città *</label>
+                  <input style={inputStyle} value={form.citta} onChange={e => update('citta', e.target.value)} placeholder="es. Barcellona" />
+                </div>
+                <div>
+                  <label style={labelStyle}>Paese *</label>
+                  <input style={inputStyle} value={form.paese} onChange={e => update('paese', e.target.value)} placeholder="es. Spagna" />
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: '0.8rem' }}>
+                <div>
+                  <label style={labelStyle}>N. di Erezione *</label>
+                  <input style={inputStyle} value={form.numero_erezione} onChange={e => update('numero_erezione', e.target.value)} placeholder="es. ES-2024-001" />
+                </div>
+                <div>
+                  <label style={labelStyle}>Data di Erezione *</label>
+                  <input type="date" style={inputStyle} value={form.data_erezione} onChange={e => update('data_erezione', e.target.value)} />
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: '0.8rem' }}>
+                <div>
+                  <label style={labelStyle}>N. di aggregazione *</label>
+                  <input style={inputStyle} value={form.numero_aggregazione} onChange={e => update('numero_aggregazione', e.target.value)} placeholder="es. 2024-047" />
+                </div>
+                <div>
+                  <label style={labelStyle}>Data di aggregazione *</label>
+                  <input type="date" style={inputStyle} value={form.data_aggregazione_originale} onChange={e => update('data_aggregazione_originale', e.target.value)} />
+                </div>
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: '0.8rem' }}>
-              <div>
-                <label style={labelStyle}>N. di Erezione *</label>
-                <input style={inputStyle} value={form.numero_erezione} onChange={e => update('numero_erezione', e.target.value)} placeholder="es. ES-2024-001" />
-              </div>
-              <div>
-                <label style={labelStyle}>N. di aggregazione *</label>
-                <input style={inputStyle} value={form.numero_aggregazione} onChange={e => update('numero_aggregazione', e.target.value)} placeholder="es. 2024-047" />
-              </div>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: '1.25rem' }}>
-              <div>
-                <label style={labelStyle}>Città</label>
-                <input style={inputStyle} value={form.citta} onChange={e => update('citta', e.target.value)} placeholder="es. Barcellona" />
-              </div>
-              <div>
-                <label style={labelStyle}>Data aggregazione originale *</label>
-                <input type="date" style={inputStyle} value={form.data_aggregazione_originale} onChange={e => update('data_aggregazione_originale', e.target.value)} />
-              </div>
-            </div>
-
-            {/* Dati contatto */}
-            <div style={{ fontSize: 11, fontWeight: 500, color: '#888', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.6rem', paddingBottom: '0.4rem', borderBottom: '0.5px solid #e5e5e5' }}>
-              Referente e contatti — aggiornabili ad ogni rinnovo
-            </div>
-
-            <div style={{ marginBottom: '0.8rem' }}>
-              <label style={labelStyle}>Referente / Responsabile *</label>
-              <input style={inputStyle} value={form.referente} onChange={e => update('referente', e.target.value)} placeholder="Nome e cognome" />
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: '0.8rem' }}>
-              <div>
-                <label style={labelStyle}>Email del gruppo *</label>
-                <input type="email" style={inputStyle} value={form.email} onChange={e => update('email', e.target.value)} placeholder="email@esempio.com" />
-              </div>
-              <div>
-                <label style={labelStyle}>Telefono</label>
-                <input style={inputStyle} value={form.telefono} onChange={e => update('telefono', e.target.value)} placeholder="+1 ..." />
-              </div>
-            </div>
-
+            {/* Responsabili */}
             <div style={{ marginBottom: '1.25rem' }}>
-              <label style={labelStyle}>Numero di membri *</label>
-              <input type="number" style={inputStyle} value={form.numero_membri} onChange={e => update('numero_membri', e.target.value)} placeholder="es. 30" min="1" />
+              <div style={sectionTitle}>Responsabili del gruppo</div>
+
+              <div style={{ marginBottom: '0.5rem', fontSize: 12, color: '#888' }}>Presidente</div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: '0.8rem' }}>
+                <div>
+                  <label style={labelStyle}>Nome *</label>
+                  <input style={inputStyle} value={form.nome_presidente} onChange={e => update('nome_presidente', e.target.value)} placeholder="Nome" />
+                </div>
+                <div>
+                  <label style={labelStyle}>Cognome *</label>
+                  <input style={inputStyle} value={form.cognome_presidente} onChange={e => update('cognome_presidente', e.target.value)} placeholder="Cognome" />
+                </div>
+              </div>
+
+              <div style={{ marginBottom: '0.5rem', fontSize: 12, color: '#888' }}>Animatore spirituale locale</div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: '0.8rem' }}>
+                <div>
+                  <label style={labelStyle}>Nome *</label>
+                  <input style={inputStyle} value={form.nome_animatore} onChange={e => update('nome_animatore', e.target.value)} placeholder="Nome" />
+                </div>
+                <div>
+                  <label style={labelStyle}>Cognome *</label>
+                  <input style={inputStyle} value={form.cognome_animatore} onChange={e => update('cognome_animatore', e.target.value)} placeholder="Cognome" />
+                </div>
+              </div>
+            </div>
+
+            {/* Contatti */}
+            <div style={{ marginBottom: '1.25rem' }}>
+              <div style={sectionTitle}>Contatti — aggiornabili ad ogni rinnovo</div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: '0.8rem' }}>
+                <div>
+                  <label style={labelStyle}>Email del gruppo *</label>
+                  <input type="email" style={inputStyle} value={form.email} onChange={e => update('email', e.target.value)} placeholder="email@esempio.com" />
+                </div>
+                <div>
+                  <label style={labelStyle}>Telefono</label>
+                  <input style={inputStyle} value={form.telefono} onChange={e => update('telefono', e.target.value)} placeholder="+1 ..." />
+                </div>
+              </div>
+
+              <div style={{ marginBottom: '0.8rem' }}>
+                <label style={labelStyle}>Numero di membri *</label>
+                <input type="number" style={inputStyle} value={form.numero_membri} onChange={e => update('numero_membri', e.target.value)} placeholder="es. 30" min="1" />
+              </div>
             </div>
 
             <div style={{ background: '#f5f5f3', borderRadius: 8, padding: '0.7rem 0.9rem', fontSize: 12, color: '#888', marginBottom: '1rem' }}>
