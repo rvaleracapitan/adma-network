@@ -195,7 +195,7 @@ export default function Registrazione() {
             </div>
 
             <div style={{ background: '#f5f5f3', borderRadius: 8, padding: '0.7rem 0.9rem', fontSize: 12, color: '#888', marginBottom: '1rem' }}>
-              Dopo l'approvazione della Primaria riceverete via email le credenziali di accesso (email + password). L'aggregazione sarà valida per 12 mesi.
+              Dopo l'approvazione della Primaria riceverete via email le credenziali di accesso. La registrazione sarà valida per 12 mesi.
             </div>
 
             <button onClick={handleSubmit} disabled={sending}
