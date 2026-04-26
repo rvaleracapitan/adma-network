@@ -59,17 +59,24 @@ export default function Admin() {
   }
 
   async function approvaRinnovo(r: any) {
-    const nuovaScadenza = new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split('T')[0]
-    await supabase.from('groups').update({
-      referente: r.referente,
-      email: r.email,
-      telefono: r.telefono,
-      numero_membri: r.numero_membri,
-      scadenza: nuovaScadenza,
-    }).eq('id', r.group_id)
-    await supabase.from('renewals').update({ stato: 'approved', reviewed_at: new Date().toISOString() }).eq('id', r.id)
-    await loadData()
-  }
+  const nuovaScadenza = new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split('T')[0]
+  await supabase.from('groups').update({
+    referente: r.referente,
+    email: r.email,
+    telefono: r.telefono,
+    numero_membri: r.numero_membri,
+    nome_presidente: r.nome_presidente,
+    cognome_presidente: r.cognome_presidente,
+    nome_animatore: r.nome_animatore,
+    cognome_animatore: r.cognome_animatore,
+    scadenza: nuovaScadenza,
+  }).eq('id', r.group_id)
+  await supabase.from('renewals')
+    .update({ stato: 'approved', reviewed_at: new Date().toISOString() })
+    .eq('id', r.id)
+  alert(`Rinnovo approvato! Nuova scadenza: ${nuovaScadenza}`)
+  await loadData()
+}
 
   async function rifiutaRinnovo(id: string) {
     await supabase.from('renewals').update({ stato: 'rejected', reviewed_at: new Date().toISOString() }).eq('id', id)

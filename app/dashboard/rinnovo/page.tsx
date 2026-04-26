@@ -12,6 +12,10 @@ export default function Rinnovo() {
     email: '',
     telefono: '',
     numero_membri: '',
+    nome_presidente: '',
+    cognome_presidente: '',
+    nome_animatore: '',
+    cognome_animatore: '',
   })
 
   useEffect(() => {
@@ -25,6 +29,10 @@ export default function Rinnovo() {
         email: data?.email || '',
         telefono: data?.telefono || '',
         numero_membri: data?.numero_membri?.toString() || '',
+        nome_presidente: data?.nome_presidente || '',
+        cognome_presidente: data?.cognome_presidente || '',
+        nome_animatore: data?.nome_animatore || '',
+        cognome_animatore: data?.cognome_animatore || '',
       })
       setLoading(false)
     }
@@ -35,6 +43,10 @@ export default function Rinnovo() {
   const daysLeft = group?.scadenza ? Math.round((new Date(group.scadenza).getTime() - new Date().getTime()) / 86400000) : null
 
   async function handleSubmit() {
+    if (!form.email || !form.numero_membri || !form.nome_presidente || !form.cognome_presidente || !form.nome_animatore || !form.cognome_animatore) {
+      alert('Compila tutti i campi obbligatori.')
+      return
+    }
     setSending(true)
     await supabase.from('renewals').insert({
       group_id: group.id,
@@ -42,9 +54,50 @@ export default function Rinnovo() {
       email: form.email,
       telefono: form.telefono,
       numero_membri: parseInt(form.numero_membri),
+      nome_presidente: form.nome_presidente,
+      cognome_presidente: form.cognome_presidente,
+      nome_animatore: form.nome_animatore,
+      cognome_animatore: form.cognome_animatore,
     })
     setSending(false)
     setSent(true)
+  }
+
+  const inputStyle = {
+    width: '100%',
+    padding: '9px 12px',
+    fontSize: 14,
+    border: '0.5px solid #ddd',
+    borderRadius: 8,
+    boxSizing: 'border-box' as const,
+  }
+
+  const labelStyle = {
+    display: 'block' as const,
+    fontSize: 13,
+    color: '#888',
+    marginBottom: 3,
+  }
+
+  const lockedStyle = {
+    padding: '9px 12px',
+    background: '#f5f5f3',
+    border: '0.5px solid #e5e5e5',
+    borderRadius: 8,
+    fontSize: 14,
+    color: '#888',
+    width: '100%',
+  }
+
+  const sectionTitle = {
+    fontSize: 11,
+    fontWeight: 500,
+    color: '#888',
+    textTransform: 'uppercase' as const,
+    letterSpacing: '0.05em',
+    marginBottom: '0.6rem',
+    paddingBottom: '0.4rem',
+    borderBottom: '0.5px solid #e5e5e5',
   }
 
   if (loading) return <div style={{ padding: '2rem', textAlign: 'center' }}>Caricamento...</div>
@@ -92,51 +145,79 @@ export default function Rinnovo() {
 
             {/* Dati bloccati */}
             <div style={{ marginBottom: '1.25rem' }}>
-              <div style={{ fontSize: 11, fontWeight: 500, color: '#888', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.6rem', paddingBottom: '0.4rem', borderBottom: '0.5px solid #e5e5e5' }}>
-                Dati identificativi — non modificabili
+              <div style={sectionTitle}>Dati identificativi — non modificabili</div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: '0.8rem' }}>
+                <div>
+                  <label style={labelStyle}>Nome del gruppo</label>
+                  <div style={lockedStyle}>{group?.nome}</div>
+                </div>
+                <div>
+                  <label style={labelStyle}>Paese</label>
+                  <div style={lockedStyle}>{group?.paese}</div>
+                </div>
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                {[
-                  ['Nome del gruppo', group?.nome],
-                  ['Paese', group?.paese],
-                  ['N. di Erezione', group?.numero_erezione],
-                  ['N. di aggregazione', group?.numero_aggregazione],
-                ].map(([label, value]) => (
-                  <div key={label}>
-                    <div style={{ fontSize: 13, color: '#888', marginBottom: 3 }}>{label}</div>
-                    <div style={{ padding: '9px 12px', background: '#f5f5f3', border: '0.5px solid #e5e5e5', borderRadius: 8, fontSize: 14, color: '#888' }}>{value}</div>
-                  </div>
-                ))}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: '0.8rem' }}>
+                <div>
+                  <label style={labelStyle}>N. di Erezione</label>
+                  <div style={lockedStyle}>{group?.numero_erezione}</div>
+                </div>
+                <div>
+                  <label style={labelStyle}>N. di aggregazione</label>
+                  <div style={lockedStyle}>{group?.numero_aggregazione}</div>
+                </div>
               </div>
-              <div style={{ fontSize: 11, color: '#aaa', marginTop: 6 }}>Per correzioni scrivi a <span style={{ color: '#185FA5' }}>primaria@adma.it</span></div>
+              <div style={{ fontSize: 11, color: '#aaa', marginTop: 4 }}>
+                Per correzioni scrivi a <span style={{ color: '#185FA5' }}>primaria@adma.it</span>
+              </div>
             </div>
 
             {/* Dati aggiornabili */}
             <div style={{ marginBottom: '1.25rem' }}>
-              <div style={{ fontSize: 11, fontWeight: 500, color: '#888', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.6rem', paddingBottom: '0.4rem', borderBottom: '0.5px solid #e5e5e5' }}>
-                Dati aggiornabili
-              </div>
-              <div style={{ marginBottom: '0.8rem' }}>
-                <label style={{ display: 'block', fontSize: 13, color: '#888', marginBottom: 3 }}>Referente / Responsabile *</label>
-                <input value={form.referente} onChange={e => setForm({ ...form, referente: e.target.value })}
-                  style={{ width: '100%', padding: '9px 12px', fontSize: 14, border: '0.5px solid #ddd', borderRadius: 8, boxSizing: 'border-box' }} />
-              </div>
+              <div style={sectionTitle}>Responsabili e contatti — aggiornabili</div>
+
+              <div style={{ marginBottom: '0.5rem', fontSize: 12, color: '#555', fontWeight: 500 }}>Presidente</div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: '0.8rem' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: 13, color: '#888', marginBottom: 3 }}>Email *</label>
-                  <input type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })}
-                    style={{ width: '100%', padding: '9px 12px', fontSize: 14, border: '0.5px solid #ddd', borderRadius: 8, boxSizing: 'border-box' }} />
+                  <label style={labelStyle}>Nome *</label>
+                  <input style={inputStyle} value={form.nome_presidente} onChange={e => setForm({ ...form, nome_presidente: e.target.value })} placeholder="Nome" />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: 13, color: '#888', marginBottom: 3 }}>Telefono</label>
-                  <input value={form.telefono} onChange={e => setForm({ ...form, telefono: e.target.value })}
-                    style={{ width: '100%', padding: '9px 12px', fontSize: 14, border: '0.5px solid #ddd', borderRadius: 8, boxSizing: 'border-box' }} />
+                  <label style={labelStyle}>Cognome *</label>
+                  <input style={inputStyle} value={form.cognome_presidente} onChange={e => setForm({ ...form, cognome_presidente: e.target.value })} placeholder="Cognome" />
                 </div>
               </div>
+
+              <div style={{ marginBottom: '0.5rem', fontSize: 12, color: '#555', fontWeight: 500 }}>Animatore spirituale locale</div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: '0.8rem' }}>
+                <div>
+                  <label style={labelStyle}>Nome *</label>
+                  <input style={inputStyle} value={form.nome_animatore} onChange={e => setForm({ ...form, nome_animatore: e.target.value })} placeholder="Nome" />
+                </div>
+                <div>
+                  <label style={labelStyle}>Cognome *</label>
+                  <input style={inputStyle} value={form.cognome_animatore} onChange={e => setForm({ ...form, cognome_animatore: e.target.value })} placeholder="Cognome" />
+                </div>
+              </div>
+
               <div style={{ marginBottom: '0.8rem' }}>
-                <label style={{ display: 'block', fontSize: 13, color: '#888', marginBottom: 3 }}>Numero di membri *</label>
-                <input type="number" value={form.numero_membri} onChange={e => setForm({ ...form, numero_membri: e.target.value })}
-                  style={{ width: '100%', padding: '9px 12px', fontSize: 14, border: '0.5px solid #ddd', borderRadius: 8, boxSizing: 'border-box' }} />
+                <label style={labelStyle}>Referente / Responsabile *</label>
+                <input style={inputStyle} value={form.referente} onChange={e => setForm({ ...form, referente: e.target.value })} />
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: '0.8rem' }}>
+                <div>
+                  <label style={labelStyle}>Email *</label>
+                  <input type="email" style={inputStyle} value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
+                </div>
+                <div>
+                  <label style={labelStyle}>Telefono</label>
+                  <input style={inputStyle} value={form.telefono} onChange={e => setForm({ ...form, telefono: e.target.value })} />
+                </div>
+              </div>
+
+              <div>
+                <label style={labelStyle}>Numero di membri *</label>
+                <input type="number" style={inputStyle} value={form.numero_membri} onChange={e => setForm({ ...form, numero_membri: e.target.value })} min="1" />
               </div>
             </div>
 
@@ -148,7 +229,7 @@ export default function Rinnovo() {
         ) : (
           <div style={{ background: '#EAF3DE', border: '0.5px solid #9FE1CB', borderRadius: 12, padding: '1.5rem', fontSize: 14, color: '#3B6D11' }}>
             <div style={{ fontWeight: 500, marginBottom: 6 }}>Rinnovo inviato con successo!</div>
-            La richiesta è stata trasmessa alla Primaria di Valdocco. Una volta approvata, la tua aggregazione sarà attiva per altri 12 mesi.
+            La richiesta è stata trasmessa alla Primaria di Valdocco. Una volta approvata, la tua registrazione sarà attiva per altri 12 mesi.
             <div style={{ marginTop: '1rem' }}>
               <a href="/dashboard/mappa" style={{ color: '#3B6D11', fontSize: 13 }}>← Torna alla mappa</a>
             </div>
