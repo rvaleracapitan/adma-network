@@ -39,8 +39,13 @@ export default function Rinnovo() {
     load()
   }, [])
 
-  const isAttivo = group?.scadenza && new Date(group.scadenza) >= new Date()
-  const daysLeft = group?.scadenza ? Math.round((new Date(group.scadenza).getTime() - new Date().getTime()) / 86400000) : null
+  const oggi = new Date()
+  const scadenza = group?.scadenza ? new Date(group.scadenza) : null
+  const daysLeft = scadenza ? Math.round((scadenza.getTime() - oggi.getTime()) / 86400000) : null
+  const isAttivo = scadenza && scadenza >= oggi
+  const isScaduto = scadenza && scadenza < oggi
+  const rinnovoAperto = isScaduto || (daysLeft !== null && daysLeft <= 30)
+  const giorniAllaFinestra = daysLeft !== null && daysLeft > 30 ? daysLeft - 30 : 0
 
   async function handleSubmit() {
     if (!form.email || !form.numero_membri || !form.nome_presidente || !form.cognome_presidente || !form.nome_animatore || !form.cognome_animatore) {
@@ -120,27 +125,42 @@ export default function Rinnovo() {
           <a href="/dashboard/mappa" style={{ fontSize: 12, color: '#185FA5', textDecoration: 'underline' }}>← Mappa</a>
         </div>
 
-        {/* Alert stato */}
-        {isAttivo && daysLeft !== null && daysLeft <= 30 && (
-          <div style={{ background: '#FAEEDA', border: '0.5px solid #FAC775', borderRadius: 8, padding: '0.75rem 1rem', fontSize: 13, color: '#854F0B', marginBottom: '1rem', display: 'flex', gap: 8 }}>
-            <span>⚠</span>
-            <div>Il rinnovo scade tra <strong>{daysLeft} giorni</strong> ({group.scadenza}). Confermalo prima della scadenza.</div>
-          </div>
-        )}
-        {!isAttivo && (
-          <div style={{ background: '#FAEEDA', border: '0.5px solid #FAC775', borderRadius: 8, padding: '0.75rem 1rem', fontSize: 13, color: '#854F0B', marginBottom: '1rem', display: 'flex', gap: 8 }}>
-            <span>⚠</span>
-            <div>Il rinnovo è scaduto il <strong>{group?.scadenza}</strong>. Rinnovalo per accedere a tutti i servizi.</div>
-          </div>
-        )}
-        {isAttivo && daysLeft !== null && daysLeft > 30 && (
-          <div style={{ background: '#EAF3DE', border: '0.5px solid #C0DD97', borderRadius: 8, padding: '0.75rem 1rem', fontSize: 13, color: '#3B6D11', marginBottom: '1rem', display: 'flex', gap: 8 }}>
-            <span>✓</span>
-            <div>Aggregazione attiva fino al <strong>{group?.scadenza}</strong>. Puoi rinnovare in anticipo.</div>
+        {/* Registrazione ancora valida — rinnovo non ancora disponibile */}
+        {isAttivo && !rinnovoAperto && (
+          <div style={{ background: '#EAF3DE', border: '0.5px solid #C0DD97', borderRadius: 12, padding: '1.5rem', fontSize: 14, color: '#3B6D11' }}>
+            <div style={{ fontWeight: 500, marginBottom: 8, fontSize: 15 }}>✓ La tua registrazione è attiva</div>
+            <p style={{ marginBottom: 8 }}>
+              La registrazione è valida fino al <strong>{group?.scadenza}</strong>.
+            </p>
+            <p style={{ color: '#3B6D11' }}>
+              Potrai richiedere il rinnovo a partire dal <strong>
+                {new Date(scadenza!.getTime() - 30 * 86400000).toLocaleDateString('it-IT')}
+              </strong>, ovvero 30 giorni prima della scadenza.
+            </p>
+            <div style={{ marginTop: '1rem', padding: '0.7rem 1rem', background: '#d4edda', borderRadius: 8, fontSize: 13 }}>
+              Mancano ancora <strong>{giorniAllaFinestra} giorni</strong> prima che si apra la finestra di rinnovo.
+            </div>
           </div>
         )}
 
-        {!sent ? (
+        {/* Rinnovo scaduto */}
+        {isScaduto && !sent && (
+          <div style={{ background: '#FAEEDA', border: '0.5px solid #FAC775', borderRadius: 8, padding: '0.75rem 1rem', fontSize: 13, color: '#854F0B', marginBottom: '1rem', display: 'flex', gap: 8 }}>
+            <span>⚠</span>
+            <div>La registrazione è scaduta il <strong>{group?.scadenza}</strong>. Rinnova subito per accedere a tutti i servizi.</div>
+          </div>
+        )}
+
+        {/* Rinnovo in scadenza entro 30 giorni */}
+        {isAttivo && rinnovoAperto && !sent && (
+          <div style={{ background: '#FAEEDA', border: '0.5px solid #FAC775', borderRadius: 8, padding: '0.75rem 1rem', fontSize: 13, color: '#854F0B', marginBottom: '1rem', display: 'flex', gap: 8 }}>
+            <span>⚠</span>
+            <div>La registrazione scade tra <strong>{daysLeft} giorni</strong> ({group?.scadenza}). Confermala prima della scadenza.</div>
+          </div>
+        )}
+
+        {/* Form rinnovo — visibile solo se nella finestra */}
+        {rinnovoAperto && !sent && (
           <div style={{ background: 'white', border: '0.5px solid #e5e5e5', borderRadius: 12, padding: '1.5rem' }}>
 
             {/* Dati bloccati */}
@@ -200,7 +220,7 @@ export default function Rinnovo() {
               </div>
 
               <div style={{ marginBottom: '0.8rem' }}>
-                <label style={labelStyle}>Referente / Responsabile *</label>
+                <label style={labelStyle}>Referente *</label>
                 <input style={inputStyle} value={form.referente} onChange={e => setForm({ ...form, referente: e.target.value })} />
               </div>
 
@@ -226,7 +246,10 @@ export default function Rinnovo() {
               {sending ? 'Invio in corso...' : 'Conferma rinnovo'}
             </button>
           </div>
-        ) : (
+        )}
+
+        {/* Successo */}
+        {sent && (
           <div style={{ background: '#EAF3DE', border: '0.5px solid #9FE1CB', borderRadius: 12, padding: '1.5rem', fontSize: 14, color: '#3B6D11' }}>
             <div style={{ fontWeight: 500, marginBottom: 6 }}>Rinnovo inviato con successo!</div>
             La richiesta è stata trasmessa alla Primaria di Valdocco. Una volta approvata, la tua registrazione sarà attiva per altri 12 mesi.
@@ -235,6 +258,7 @@ export default function Rinnovo() {
             </div>
           </div>
         )}
+
       </div>
     </main>
   )
