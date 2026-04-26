@@ -25,8 +25,14 @@ export default function Mappa() {
       setGroups(all || [])
     }
     load()
-  }, [])
 
+    // Ricarica i dati ogni volta che la pagina torna visibile
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') load()
+    }
+    document.addEventListener('visibilitychange', handleVisibility)
+    return () => document.removeEventListener('visibilitychange', handleVisibility)
+  }, [])
   useEffect(() => {
     if (!chatGroup || !myGroup) return
     loadMessages()
