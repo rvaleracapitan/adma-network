@@ -54,7 +54,7 @@ export default function Profilo() {
               <div style={{ fontSize: 14, color: '#888' }}>{group?.citta}, {group?.paese}</div>
               <div style={{ fontSize: 13, color: '#3B6D11', marginTop: 2 }}>
                 Aggregato dal {group?.data_aggregazione_originale ? new Date(group.data_aggregazione_originale).toLocaleDateString('it-IT') : '—'}
-                {anniNellaRete > 0 && ` · ${anniNellaRete} anni nella rete`}
+                {anniNellaRete > 0 && ` · aggregato all'ADMA Primaria da ${anniNellaRete} anni`}
               </div>
             </div>
           </div>
