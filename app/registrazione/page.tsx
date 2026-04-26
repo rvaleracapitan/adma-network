@@ -211,20 +211,53 @@ export default function Registrazione() {
               </div>
             </div>
 
-            {/* Documentazione */}
-            <div style={{ marginBottom: '1.25rem' }}>
-              <div style={sectionTitle}>Documentazione</div>
-              <label style={labelStyle}>
-                Diploma di aggregazione <span style={{ fontSize: 11 }}>(facoltativo · JPG, PNG o PDF)</span>
-              </label>
-              <input
-                type="file"
-                accept="image/*,.pdf"
-                onChange={e => setDiploma(e.target.files?.[0] || null)}
-                style={{ width: '100%', fontSize: 13, color: '#888' }}
-              />
-              {diploma && <div style={{ fontSize: 12, color: '#3B6D11', marginTop: 4 }}>✓ {diploma.name}</div>}
-            </div>
+           {/* Documentazione */}
+<div style={{ marginBottom: '1.25rem' }}>
+  <div style={sectionTitle}>Documentazione</div>
+  <label style={labelStyle}>
+    Diploma di aggregazione <span style={{ fontSize: 11, color: '#aaa' }}>(facoltativo · JPG, PNG o PDF)</span>
+  </label>
+  <label style={{
+    display: 'flex',
+    alignItems: 'center',
+    gap: 12,
+    border: diploma ? '0.5px solid #1D9E75' : '1px dashed #ddd',
+    borderRadius: 8,
+    padding: '12px 16px',
+    cursor: 'pointer',
+    background: diploma ? '#EAF3DE' : '#fafafa',
+    marginTop: 4,
+  }}>
+    <div style={{
+      width: 36, height: 36, borderRadius: 8,
+      background: diploma ? '#1D9E75' : '#f0f0ee',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      fontSize: 18, flexShrink: 0,
+    }}>
+      {diploma ? '✓' : '📎'}
+    </div>
+    <div>
+      <div style={{ fontSize: 13, fontWeight: 500, color: diploma ? '#1D9E75' : '#555' }}>
+        {diploma ? diploma.name : 'Clicca per allegare il diploma'}
+      </div>
+      <div style={{ fontSize: 11, color: '#aaa', marginTop: 2 }}>
+        {diploma ? `${(diploma.size / 1024).toFixed(0)} KB` : 'JPG, PNG o PDF · max 5MB'}
+      </div>
+    </div>
+    <input
+      type="file"
+      accept="image/*,.pdf"
+      onChange={e => setDiploma(e.target.files?.[0] || null)}
+      style={{ display: 'none' }}
+    />
+  </label>
+  {diploma && (
+    <button onClick={() => setDiploma(null)}
+      style={{ background: 'none', border: 'none', color: '#aaa', fontSize: 12, cursor: 'pointer', marginTop: 4, padding: 0 }}>
+      × Rimuovi file
+    </button>
+  )}
+</div>
 
             <div style={{ background: '#f5f5f3', borderRadius: 8, padding: '0.7rem 0.9rem', fontSize: 12, color: '#888', marginBottom: '1rem' }}>
               Dopo l'approvazione della Primaria riceverete via email le credenziali di accesso. La registrazione sarà valida per 12 mesi.
