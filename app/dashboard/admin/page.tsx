@@ -58,9 +58,32 @@ export default function Admin() {
     await loadData()
   }
 
-  async function approvaRinnovo(r: any) {
-  const nuovaScadenza = new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split('T')[0]
+ async function approvaRinnovo(r: any) {
   const annoCorrente = new Date().getFullYear()
+  const nuovaScadenza = `${annoCorrente + 1}-03-31`
+
+  await supabase.from('groups').update({
+    referente: r.referente,
+    email: r.email,
+    telefono: r.telefono,
+    numero_membri: r.numero_membri,
+    nome_presidente: r.nome_presidente,
+    cognome_presidente: r.cognome_presidente,
+    nome_animatore: r.nome_animatore,
+    cognome_animatore: r.cognome_animatore,
+    scadenza: nuovaScadenza,
+  }).eq('id', r.group_id)
+
+  await supabase.from('renewals')
+    .update({ stato: 'approved', reviewed_at: new Date().toISOString() })
+    .eq('id', r.id)
+
+  await supabase.from('badges')
+    .upsert({ group_id: r.group_id, anno: annoCorrente }, { onConflict: 'group_id,anno' })
+
+  alert(`Rinnovo ${annoCorrente} approvato!\nTimbro ${annoCorrente} assegnato.\nNuova scadenza: 31 marzo ${annoCorrente + 1}`)
+  await loadData()
+}
 
   await supabase.from('groups').update({
     referente: r.referente,
