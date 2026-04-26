@@ -37,80 +37,60 @@ export default function Admin() {
   }
 
   async function approvaRegistrazione(r: any) {
-  const { data: { session } } = await supabase.auth.getSession()
-  const res = await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/approva-registrazione`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${session?.access_token}`,
-      'apikey': process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    },
-    body: JSON.stringify({ registrazione_id: r.id })
-  })
-  const data = await res.json()
-  if (!res.ok) { alert('Errore: ' + data.error); return; }
-  alert(`Approvato!\nEmail: ${data.email}\nPassword temporanea: ${data.password}`)
-  await loadData()
-}
-
-  async function rifiutaRegistrazione(id: string) {
-    await supabase.from('registration_requests').update({ stato: 'rejected', reviewed_at: new Date().toISOString() }).eq('id', id)
+    const { data: { session } } = await supabase.auth.getSession()
+    const res = await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/approva-registrazione`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${session?.access_token}`,
+        'apikey': process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      },
+      body: JSON.stringify({ registrazione_id: r.id })
+    })
+    const data = await res.json()
+    if (!res.ok) { alert('Errore: ' + data.error); return; }
+    alert(`Approvato!\nEmail: ${data.email}\nPassword temporanea: ${data.password}`)
     await loadData()
   }
 
- async function approvaRinnovo(r: any) {
-  const annoCorrente = new Date().getFullYear()
-  const nuovaScadenza = `${annoCorrente + 1}-03-31`
+  async function rifiutaRegistrazione(id: string) {
+    await supabase.from('registration_requests')
+      .update({ stato: 'rejected', reviewed_at: new Date().toISOString() })
+      .eq('id', id)
+    await loadData()
+  }
 
-  await supabase.from('groups').update({
-    referente: r.referente,
-    email: r.email,
-    telefono: r.telefono,
-    numero_membri: r.numero_membri,
-    nome_presidente: r.nome_presidente,
-    cognome_presidente: r.cognome_presidente,
-    nome_animatore: r.nome_animatore,
-    cognome_animatore: r.cognome_animatore,
-    scadenza: nuovaScadenza,
-  }).eq('id', r.group_id)
+  async function approvaRinnovo(r: any) {
+    const annoCorrente = new Date().getFullYear()
+    const nuovaScadenza = `${annoCorrente + 1}-03-31`
 
-  await supabase.from('renewals')
-    .update({ stato: 'approved', reviewed_at: new Date().toISOString() })
-    .eq('id', r.id)
+    await supabase.from('groups').update({
+      referente: r.referente,
+      email: r.email,
+      telefono: r.telefono,
+      numero_membri: r.numero_membri,
+      nome_presidente: r.nome_presidente,
+      cognome_presidente: r.cognome_presidente,
+      nome_animatore: r.nome_animatore,
+      cognome_animatore: r.cognome_animatore,
+      scadenza: nuovaScadenza,
+    }).eq('id', r.group_id)
 
-  await supabase.from('badges')
-    .upsert({ group_id: r.group_id, anno: annoCorrente }, { onConflict: 'group_id,anno' })
+    await supabase.from('renewals')
+      .update({ stato: 'approved', reviewed_at: new Date().toISOString() })
+      .eq('id', r.id)
 
-  alert(`Rinnovo ${annoCorrente} approvato!\nTimbro ${annoCorrente} assegnato.\nNuova scadenza: 31 marzo ${annoCorrente + 1}`)
-  await loadData()
-}
+    await supabase.from('badges')
+      .upsert({ group_id: r.group_id, anno: annoCorrente }, { onConflict: 'group_id,anno' })
 
-  await supabase.from('groups').update({
-    referente: r.referente,
-    email: r.email,
-    telefono: r.telefono,
-    numero_membri: r.numero_membri,
-    nome_presidente: r.nome_presidente,
-    cognome_presidente: r.cognome_presidente,
-    nome_animatore: r.nome_animatore,
-    cognome_animatore: r.cognome_animatore,
-    scadenza: nuovaScadenza,
-  }).eq('id', r.group_id)
-
-  await supabase.from('renewals')
-    .update({ stato: 'approved', reviewed_at: new Date().toISOString() })
-    .eq('id', r.id)
-
-  // Aggiunge il badge dell'anno corrente
-  await supabase.from('badges')
-    .upsert({ group_id: r.group_id, anno: annoCorrente }, { onConflict: 'group_id,anno' })
-
-  alert(`Rinnovo approvato! Nuova scadenza: ${nuovaScadenza}\nBadge ${annoCorrente} assegnato!`)
-  await loadData()
-}
+    alert(`Rinnovo ${annoCorrente} approvato!\nTimbro ${annoCorrente} assegnato.\nNuova scadenza: 31 marzo ${annoCorrente + 1}`)
+    await loadData()
+  }
 
   async function rifiutaRinnovo(id: string) {
-    await supabase.from('renewals').update({ stato: 'rejected', reviewed_at: new Date().toISOString() }).eq('id', id)
+    await supabase.from('renewals')
+      .update({ stato: 'rejected', reviewed_at: new Date().toISOString() })
+      .eq('id', id)
     await loadData()
   }
 
@@ -187,7 +167,8 @@ export default function Admin() {
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, marginBottom: 10 }}>
                   {[
-                    ['Referente', r.referente],
+                    ['Presidente', r.nome_presidente ? `${r.nome_presidente} ${r.cognome_presidente}` : r.referente],
+                    ['Animatore', r.nome_animatore ? `${r.nome_animatore} ${r.cognome_animatore}` : '—'],
                     ['Membri', r.numero_membri],
                     ['Email', r.email],
                     ['Telefono', r.telefono],
@@ -227,7 +208,8 @@ export default function Admin() {
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, marginBottom: 10 }}>
                   {[
-                    ['Referente', r.referente],
+                    ['Presidente', r.nome_presidente ? `${r.nome_presidente} ${r.cognome_presidente}` : '—'],
+                    ['Animatore', r.nome_animatore ? `${r.nome_animatore} ${r.cognome_animatore}` : '—'],
                     ['Membri aggiornati', r.numero_membri],
                     ['Email', r.email],
                     ['Telefono', r.telefono],
@@ -239,7 +221,7 @@ export default function Admin() {
                   ))}
                 </div>
                 <div style={{ display: 'flex', gap: 8 }}>
-                  <button style={btnOk} onClick={() => approvaRinnovo(r)}>Approva (+12 mesi)</button>
+                  <button style={btnOk} onClick={() => approvaRinnovo(r)}>Approva rinnovo {new Date().getFullYear()}</button>
                   <button style={btnNo} onClick={() => rifiutaRinnovo(r.id)}>Rifiuta</button>
                 </div>
               </div>
