@@ -60,6 +60,8 @@ export default function Admin() {
 
   async function approvaRinnovo(r: any) {
   const nuovaScadenza = new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split('T')[0]
+  const annoCorrente = new Date().getFullYear()
+
   await supabase.from('groups').update({
     referente: r.referente,
     email: r.email,
@@ -71,10 +73,16 @@ export default function Admin() {
     cognome_animatore: r.cognome_animatore,
     scadenza: nuovaScadenza,
   }).eq('id', r.group_id)
+
   await supabase.from('renewals')
     .update({ stato: 'approved', reviewed_at: new Date().toISOString() })
     .eq('id', r.id)
-  alert(`Rinnovo approvato! Nuova scadenza: ${nuovaScadenza}`)
+
+  // Aggiunge il badge dell'anno corrente
+  await supabase.from('badges')
+    .upsert({ group_id: r.group_id, anno: annoCorrente }, { onConflict: 'group_id,anno' })
+
+  alert(`Rinnovo approvato! Nuova scadenza: ${nuovaScadenza}\nBadge ${annoCorrente} assegnato!`)
   await loadData()
 }
 
