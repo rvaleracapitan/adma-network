@@ -184,8 +184,15 @@ export default function MappaLeaflet({ groups, myGroupId, searchTerm, onSelectGr
             ">${isAttivo ? 'Attivo' : 'Non attivo'}</div>
           </div>
         `)
-        marker.on('click', () => {
-  onSelectGroup(g)
+        marker.on('click', () => onSelectGroup(g))
+marker.bindPopup(`
+  <div style="font-family:sans-serif;min-width:160px;">
+    <div style="font-weight:600;font-size:13px;color:${BLU};margin-bottom:3px;">${g.nome}</div>
+    <div style="font-size:11px;color:#888;margin-bottom:2px;">${g.paese} · ${g.numero_membri} membri</div>
+    <div style="font-size:11px;color:#888;margin-bottom:8px;">${g.referente}</div>
+    <a href="/dashboard/gruppo/${g.id}" style="display:inline-block;background:${BLU};color:white;padding:4px 12px;border-radius:6px;font-size:11px;text-decoration:none;font-weight:500;">Vedi profilo completo</a>
+  </div>
+`)
   marker.getPopup()?.setContent(`
     <div style="font-family:sans-serif;min-width:160px;">
       <div style="font-weight:600;font-size:13px;color:${BLU};margin-bottom:3px;">${g.nome}</div>
