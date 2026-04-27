@@ -151,18 +151,27 @@ export default function Profilo() {
           ) : (
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14 }}>
               {badges.map(b => (
-                <div key={b.id} style={{
-                  width: 76, height: 76, borderRadius: '50%',
-                  background: `linear-gradient(135deg, ${BLU} 0%, ${AZZURRO} 100%)`,
-                  display: 'flex', flexDirection: 'column',
-                  alignItems: 'center', justifyContent: 'center',
-                  boxShadow: `0 3px 10px rgba(26,122,184,0.35)`,
-                }}>
-                  <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.7)', fontWeight: 700, letterSpacing: '0.1em' }}>ADMA</div>
-                  <div style={{ fontSize: 17, color: 'white', fontWeight: 800, lineHeight: 1.1 }}>{b.anno}</div>
-                  <div style={{ fontSize: 8, color: 'rgba(255,255,255,0.6)', marginTop: 1 }}>✓ rinnovato</div>
-                </div>
-              ))}
+  <div key={b.id} style={{
+    width: 80, height: 80, borderRadius: '50%',
+    border: `3px solid ${AZZURRO}`,
+    background: 'white',
+    display: 'flex', flexDirection: 'column',
+    alignItems: 'center', justifyContent: 'center',
+    boxShadow: `0 3px 12px rgba(41,171,226,0.3)`,
+    overflow: 'hidden',
+    position: 'relative',
+  }}>
+    <img
+      src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Torino-Basilica_Maria_Ausiliatrice.jpg/320px-Torino-Basilica_Maria_Ausiliatrice.jpg"
+      style={{ position: 'absolute', width: '100%', height: '100%', objectFit: 'cover', opacity: 0.25 }}
+    />
+    <div style={{ position: 'relative', textAlign: 'center' }}>
+      <div style={{ fontSize: 8, color: BLU, fontWeight: 700, letterSpacing: '0.1em' }}>ADMA</div>
+      <div style={{ fontSize: 18, color: BLU, fontWeight: 800, lineHeight: 1 }}>{b.anno}</div>
+      <div style={{ fontSize: 7, color: AZZURRO, marginTop: 1 }}>✓ rinnovato</div>
+    </div>
+  </div>
+))}
               {/* Prossimo timbro */}
               <div style={{
                 width: 76, height: 76, borderRadius: '50%',
