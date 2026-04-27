@@ -1,6 +1,5 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { useParams } from 'next/navigation'
 import { supabase } from '../../../../lib/supabase'
 import HeaderADMA from '../../../components/HeaderADMA'
 
@@ -8,21 +7,20 @@ const BLU = '#1A7AB8'
 const AZZURRO = '#29ABE2'
 
 export default function ProfiloGruppo() {
-  const params = useParams()
-  const id = params.id as string
-
   const [group, setGroup] = useState<any>(null)
   const [badges, setBadges] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
 
   useEffect(() => {
+    const id = window.location.pathname.split('/').pop()
     if (!id) return
+
     async function load() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { window.location.href = '/'; return; }
 
-      const { data: g, error } = await supabase
+      const { data: g } = await supabase
         .from('groups')
         .select('*')
         .eq('id', id)
@@ -30,6 +28,7 @@ export default function ProfiloGruppo() {
 
       if (!g) { setNotFound(true); setLoading(false); return; }
       setGroup(g)
+
       const { data: b } = await supabase
         .from('badges')
         .select('*')
@@ -39,7 +38,7 @@ export default function ProfiloGruppo() {
       setLoading(false)
     }
     load()
-  }, [id])
+  }, [])
 
   if (loading) return (
     <div style={{ minHeight: '100vh', background: '#F0F7FC' }}>
@@ -59,7 +58,9 @@ export default function ProfiloGruppo() {
   )
 
   const isAttivo = group?.scadenza && new Date(group.scadenza) >= new Date()
-  const annoFondazione = group?.data_aggregazione_originale ? new Date(group.data_aggregazione_originale).getFullYear() : null
+  const annoFondazione = group?.data_aggregazione_originale
+    ? new Date(group.data_aggregazione_originale).getFullYear()
+    : null
   const anniNellaRete = annoFondazione ? new Date().getFullYear() - annoFondazione : 0
 
   return (
@@ -71,6 +72,7 @@ export default function ProfiloGruppo() {
           <a href="/dashboard/mappa" style={{ fontSize: 13, color: BLU, textDecoration: 'none' }}>← Torna alla mappa</a>
         </div>
 
+        {/* Card identità */}
         <div style={{
           background: `linear-gradient(135deg, ${BLU} 0%, ${AZZURRO} 100%)`,
           borderRadius: 14, padding: '1.75rem',
@@ -116,6 +118,7 @@ export default function ProfiloGruppo() {
           </div>
         </div>
 
+        {/* Dati */}
         <div style={{ background: 'white', borderRadius: 12, padding: '1.25rem', marginBottom: '1rem', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
           <div style={{ fontSize: 11, fontWeight: 600, color: BLU, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '1rem', paddingBottom: '0.5rem', borderBottom: `2px solid ${AZZURRO}` }}>
             Dati del gruppo
@@ -142,6 +145,7 @@ export default function ProfiloGruppo() {
           </div>
         </div>
 
+        {/* Badge */}
         <div style={{ background: 'white', borderRadius: 12, padding: '1.25rem', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
           <div style={{ fontSize: 11, fontWeight: 600, color: BLU, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4, paddingBottom: '0.5rem', borderBottom: `2px solid ${AZZURRO}` }}>
             Timbri di rinnovo annuale
