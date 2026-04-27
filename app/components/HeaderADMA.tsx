@@ -2,8 +2,8 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
 
-const ADMA_BLU = '#1A3A6B'
-const ADMA_ORO = '#C9A84C'
+const BLU = '#1A7AB8'
+const AZZURRO = '#29ABE2'
 
 export default function HeaderADMA() {
   const [myGroup, setMyGroup] = useState<any>(null)
@@ -26,33 +26,31 @@ export default function HeaderADMA() {
 
   return (
     <div style={{
-      background: ADMA_BLU,
+      background: BLU,
       padding: '0 1.5rem',
       display: 'flex', alignItems: 'center', justifyContent: 'space-between',
       height: 56, position: 'sticky', top: 0, zIndex: 100,
-      borderBottom: `2px solid ${ADMA_ORO}`,
+      borderBottom: `3px solid ${AZZURRO}`,
     }}>
-      <a href="/dashboard/mappa" style={{ display: 'flex', alignItems: 'center', gap: 12, textDecoration: 'none' }}>
-        <div style={{
-          width: 32, height: 32, borderRadius: '50%',
-          background: 'rgba(201,168,76,0.15)',
-          border: `1.5px solid ${ADMA_ORO}`,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: 14, color: ADMA_ORO, fontWeight: 700, fontFamily: 'serif',
-        }}>A</div>
-        <div>
-          <div style={{ fontSize: 13, fontWeight: 700, color: ADMA_ORO, letterSpacing: '0.1em', fontFamily: 'serif' }}>ADMA</div>
-          <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>{myGroup?.nome || ''}</div>
+      <a href="/dashboard/mappa" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
+        <img src="/adma-logo.png" alt="ADMA" style={{ height: 38, width: 'auto', filter: 'brightness(0) invert(1)' }} />
+        <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', letterSpacing: '0.04em', maxWidth: 120 }}>
+          {myGroup?.nome || ''}
         </div>
       </a>
       <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
         {navLinks.map(l => (
-          <a key={l.href} href={l.href} style={{ fontSize: 12, color: 'rgba(255,255,255,0.75)', textDecoration: 'none' }}>
+          <a key={l.href} href={l.href} style={{
+            fontSize: 12, color: 'rgba(255,255,255,0.8)',
+            textDecoration: 'none',
+          }}>
             {l.label}
           </a>
         ))}
-        <button onClick={async () => { await supabase.auth.signOut(); window.location.href = '/' }}
-          style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', background: 'none', border: 'none', cursor: 'pointer' }}>
+        <button
+          onClick={async () => { await supabase.auth.signOut(); window.location.href = '/' }}
+          style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', background: 'none', border: 'none', cursor: 'pointer' }}
+        >
           Esci
         </button>
       </div>

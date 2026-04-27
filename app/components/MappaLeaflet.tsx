@@ -19,8 +19,8 @@ interface Props {
   onSelectGroup: (g: Gruppo) => void
 }
 
-const ADMA_BLU = '#1A3A6B'
-const ADMA_ORO = '#C9A84C'
+const BLU = '#1A7AB8'
+const AZZURRO = '#29ABE2'
 
 export default function MappaLeaflet({ groups, searchTerm, onSelectGroup }: Props) {
   const mapRef = useRef<any>(null)
@@ -39,11 +39,10 @@ export default function MappaLeaflet({ groups, searchTerm, onSelectGroup }: Prop
     style.textContent = `
       @keyframes pulse {
         0% { transform: scale(1); opacity: 1; }
-        50% { transform: scale(1.5); opacity: 0.7; }
+        50% { transform: scale(1.6); opacity: 0.7; }
         100% { transform: scale(1); opacity: 1; }
       }
       .marker-pulse { animation: pulse 1s ease-in-out infinite; }
-      .leaflet-container { font-family: sans-serif; }
     `
     document.head.appendChild(style)
 
@@ -56,20 +55,20 @@ export default function MappaLeaflet({ groups, searchTerm, onSelectGroup }: Prop
       // Marker Valdocco con foto Basilica
       const valdoccoIcon = L.divIcon({
         html: `<div style="
-          width:36px;height:36px;border-radius:50%;
+          width:38px;height:38px;border-radius:50%;
           background:white;
-          border:2.5px solid ${ADMA_ORO};
+          border:3px solid ${AZZURRO};
           overflow:hidden;
           box-shadow:0 2px 8px rgba(0,0,0,0.3);
-          display:flex;align-items:center;justify-content:center;
         ">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Torino-Basilica_Maria_Ausiliatrice.jpg/320px-Torino-Basilica_Maria_Ausiliatrice.jpg"
-            style="width:100%;height:100%;object-fit:cover;border-radius:50%;"
-            onerror="this.style.display='none';this.parentElement.innerHTML='<span style=color:${ADMA_ORO};font-weight:700;font-size:14px;font-family:serif>A</span>'"
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Torino-Basilica_Maria_Ausiliatrice.jpg/320px-Torino-Basilica_Maria_Ausiliatrice.jpg"
+            style="width:100%;height:100%;object-fit:cover;"
+            onerror="this.parentElement.innerHTML='<div style=background:${BLU};width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:13px>A</div>'"
           />
         </div>`,
-        iconSize: [36, 36],
-        iconAnchor: [18, 18],
+        iconSize: [38, 38],
+        iconAnchor: [19, 19],
         className: ''
       })
 
@@ -77,11 +76,12 @@ export default function MappaLeaflet({ groups, searchTerm, onSelectGroup }: Prop
         .addTo(mapRef.current)
         .bindPopup(`
           <div style="font-family:sans-serif;min-width:180px;text-align:center;">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Torino-Basilica_Maria_Ausiliatrice.jpg/320px-Torino-Basilica_Maria_Ausiliatrice.jpg"
-              style="width:100%;height:80px;object-fit:cover;border-radius:6px;margin-bottom:8px;"
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Torino-Basilica_Maria_Ausiliatrice.jpg/320px-Torino-Basilica_Maria_Ausiliatrice.jpg"
+              style="width:100%;height:90px;object-fit:cover;border-radius:6px;margin-bottom:8px;"
             />
-            <div style="font-weight:700;color:${ADMA_BLU};font-size:13px;">ADMA Primaria</div>
-            <div style="font-size:11px;color:#888;">Basilica di Maria Ausiliatrice<br>Valdocco, Torino</div>
+            <div style="font-weight:700;color:${BLU};font-size:13px;">ADMA Primaria</div>
+            <div style="font-size:11px;color:#888;margin-top:2px;">Basilica di Maria Ausiliatrice<br>Valdocco, Torino</div>
           </div>
         `)
     })
@@ -111,8 +111,8 @@ export default function MappaLeaflet({ groups, searchTerm, onSelectGroup }: Prop
         )
         const isDimmed = q.length > 0 && !isHighlighted
 
-        const color = isAttivo ? '#4A90D9' : '#B4B2A9'
-        const size = isHighlighted ? 14 : 9
+        const color = isAttivo ? AZZURRO : '#B4B2A9'
+        const size = isHighlighted ? 15 : 10
         const pulse = isHighlighted ? 'marker-pulse' : ''
         const opacity = isDimmed ? 0.15 : 1
 
@@ -121,7 +121,7 @@ export default function MappaLeaflet({ groups, searchTerm, onSelectGroup }: Prop
             width:${size}px;height:${size}px;border-radius:50%;
             background:${color};
             border:2px solid white;
-            box-shadow:0 1px 4px rgba(0,0,0,0.25);
+            box-shadow:0 1px 5px rgba(0,0,0,0.25);
             opacity:${opacity};
           "></div>`,
           iconSize: [size, size],
@@ -132,13 +132,13 @@ export default function MappaLeaflet({ groups, searchTerm, onSelectGroup }: Prop
         const marker = L.marker([g.lat, g.lng], { icon }).addTo(mapRef.current)
         marker.bindPopup(`
           <div style="font-family:sans-serif;min-width:160px;">
-            <div style="font-weight:600;font-size:13px;color:${ADMA_BLU};margin-bottom:3px;">${g.nome}</div>
+            <div style="font-weight:600;font-size:13px;color:${BLU};margin-bottom:3px;">${g.nome}</div>
             <div style="font-size:11px;color:#888;margin-bottom:2px;">${g.paese} · ${g.numero_membri} membri</div>
             <div style="font-size:11px;color:#888;margin-bottom:6px;">${g.referente}</div>
             <div style="
               display:inline-block;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:500;
-              background:${isAttivo ? '#EAF3DE' : '#f0f0ee'};
-              color:${isAttivo ? '#1D6A3A' : '#888'};
+              background:${isAttivo ? '#E3F4FC' : '#f0f0ee'};
+              color:${isAttivo ? BLU : '#888'};
             ">${isAttivo ? 'Attivo' : 'Non attivo'}</div>
           </div>
         `)

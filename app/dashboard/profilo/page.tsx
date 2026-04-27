@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../../../lib/supabase'
 import HeaderADMA from '../../components/HeaderADMA'
 
-const ADMA_BLU = '#1A3A6B'
-const ADMA_ORO = '#C9A84C'
+const BLU = '#1A7AB8'
+const AZZURRO = '#29ABE2'
 
 export default function Profilo() {
   const [group, setGroup] = useState<any>(null)
@@ -25,7 +25,7 @@ export default function Profilo() {
   }, [])
 
   if (loading) return (
-    <div style={{ minHeight: '100vh', background: '#F4F6FA' }}>
+    <div style={{ minHeight: '100vh', background: '#F0F7FC' }}>
       <HeaderADMA />
       <div style={{ padding: '2rem', textAlign: 'center', color: '#888' }}>Caricamento...</div>
     </div>
@@ -34,53 +34,67 @@ export default function Profilo() {
   const annoFondazione = group?.data_aggregazione_originale ? new Date(group.data_aggregazione_originale).getFullYear() : null
   const anniNellaRete = annoFondazione ? new Date().getFullYear() - annoFondazione : 0
   const isAttivo = group?.scadenza && new Date(group.scadenza) >= new Date()
+  const prossimoBadge = badges.some(b => b.anno === new Date().getFullYear())
+    ? new Date().getFullYear() + 1
+    : new Date().getFullYear()
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F4F6FA' }}>
+    <div style={{ minHeight: '100vh', background: '#F0F7FC' }}>
       <HeaderADMA />
       <div style={{ maxWidth: 600, margin: '0 auto', padding: '1.5rem 1rem' }}>
 
         {/* Card identità */}
         <div style={{
-          background: ADMA_BLU, borderRadius: 14, padding: '1.75rem',
+          background: `linear-gradient(135deg, ${BLU} 0%, ${AZZURRO} 100%)`,
+          borderRadius: 14, padding: '1.75rem',
           marginBottom: '1rem', position: 'relative', overflow: 'hidden',
         }}>
           <div style={{
-            position: 'absolute', top: -30, right: -30,
-            width: 120, height: 120, borderRadius: '50%',
-            background: 'rgba(201,168,76,0.08)',
-            border: `1px solid rgba(201,168,76,0.15)`,
+            position: 'absolute', top: -40, right: -40,
+            width: 150, height: 150, borderRadius: '50%',
+            background: 'rgba(255,255,255,0.06)',
           }} />
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
+          <div style={{
+            position: 'absolute', bottom: -20, left: -20,
+            width: 100, height: 100, borderRadius: '50%',
+            background: 'rgba(255,255,255,0.04)',
+          }} />
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16, position: 'relative' }}>
             <div style={{
               width: 60, height: 60, borderRadius: '50%',
-              background: 'rgba(201,168,76,0.15)',
-              border: `2px solid ${ADMA_ORO}`,
+              background: 'rgba(255,255,255,0.2)',
+              border: '2px solid rgba(255,255,255,0.5)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: 20, color: ADMA_ORO, fontWeight: 700, fontFamily: 'serif',
+              fontSize: 20, color: 'white', fontWeight: 700,
               flexShrink: 0,
             }}>
               {group?.nome?.slice(0, 2).toUpperCase()}
             </div>
             <div>
               <div style={{ fontSize: 18, fontWeight: 700, color: 'white', marginBottom: 2 }}>{group?.nome}</div>
-              <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.65)' }}>{group?.citta}, {group?.paese}</div>
+              <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.75)' }}>{group?.citta}, {group?.paese}</div>
               {anniNellaRete > 0 && (
-                <div style={{ fontSize: 12, color: ADMA_ORO, marginTop: 4 }}>
+                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)', marginTop: 4 }}>
                   Aggregato all'ADMA Primaria da {anniNellaRete} anni
                 </div>
               )}
             </div>
           </div>
-          <div style={{ marginTop: '1rem', display: 'flex', gap: 8 }}>
+          <div style={{ marginTop: '1rem', display: 'flex', gap: 8, position: 'relative' }}>
             <span style={{
-              background: isAttivo ? 'rgba(29,106,58,0.4)' : 'rgba(255,255,255,0.1)',
-              color: isAttivo ? '#7FD4A0' : 'rgba(255,255,255,0.4)',
+              background: isAttivo ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)',
+              color: isAttivo ? 'white' : 'rgba(255,255,255,0.5)',
               padding: '3px 12px', borderRadius: 999, fontSize: 11, fontWeight: 500,
+              border: '0.5px solid rgba(255,255,255,0.3)',
             }}>
               {isAttivo ? '✓ Attivo' : 'Non attivo'}
             </span>
-            <span style={{ background: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.5)', padding: '3px 12px', borderRadius: 999, fontSize: 11 }}>
+            <span style={{
+              background: 'rgba(255,255,255,0.15)',
+              color: 'rgba(255,255,255,0.7)',
+              padding: '3px 12px', borderRadius: 999, fontSize: 11,
+              border: '0.5px solid rgba(255,255,255,0.2)',
+            }}>
               Scadenza: {group?.scadenza || '—'}
             </span>
           </div>
@@ -88,7 +102,12 @@ export default function Profilo() {
 
         {/* Dati */}
         <div style={{ background: 'white', borderRadius: 12, padding: '1.25rem', marginBottom: '1rem', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
-          <div style={{ fontSize: 11, fontWeight: 600, color: ADMA_BLU, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '1rem', paddingBottom: '0.5rem', borderBottom: `2px solid ${ADMA_ORO}` }}>
+          <div style={{
+            fontSize: 11, fontWeight: 600, color: BLU,
+            textTransform: 'uppercase', letterSpacing: '0.06em',
+            marginBottom: '1rem', paddingBottom: '0.5rem',
+            borderBottom: `2px solid ${AZZURRO}`,
+          }}>
             Dati del gruppo
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
@@ -114,7 +133,12 @@ export default function Profilo() {
 
         {/* Badge timbri */}
         <div style={{ background: 'white', borderRadius: 12, padding: '1.25rem', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
-          <div style={{ fontSize: 11, fontWeight: 600, color: ADMA_BLU, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4, paddingBottom: '0.5rem', borderBottom: `2px solid ${ADMA_ORO}` }}>
+          <div style={{
+            fontSize: 11, fontWeight: 600, color: BLU,
+            textTransform: 'uppercase', letterSpacing: '0.06em',
+            marginBottom: 4, paddingBottom: '0.5rem',
+            borderBottom: `2px solid ${AZZURRO}`,
+          }}>
             Timbri di rinnovo annuale
           </div>
           <div style={{ fontSize: 12, color: '#888', marginBottom: '1.1rem' }}>
@@ -129,31 +153,27 @@ export default function Profilo() {
               {badges.map(b => (
                 <div key={b.id} style={{
                   width: 76, height: 76, borderRadius: '50%',
-                  border: `2.5px solid ${ADMA_ORO}`,
-                  background: 'white',
+                  background: `linear-gradient(135deg, ${BLU} 0%, ${AZZURRO} 100%)`,
                   display: 'flex', flexDirection: 'column',
                   alignItems: 'center', justifyContent: 'center',
-                  boxShadow: `0 0 0 4px rgba(201,168,76,0.1), 0 2px 6px rgba(0,0,0,0.08)`,
-                  position: 'relative',
+                  boxShadow: `0 3px 10px rgba(26,122,184,0.35)`,
                 }}>
-                  <div style={{ fontSize: 9, color: ADMA_ORO, fontWeight: 700, letterSpacing: '0.08em', fontFamily: 'serif' }}>ADMA</div>
-                  <div style={{ fontSize: 17, color: ADMA_BLU, fontWeight: 800, lineHeight: 1.1 }}>{b.anno}</div>
-                  <div style={{ fontSize: 8, color: '#bbb', marginTop: 1 }}>✓ rinnovato</div>
+                  <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.7)', fontWeight: 700, letterSpacing: '0.1em' }}>ADMA</div>
+                  <div style={{ fontSize: 17, color: 'white', fontWeight: 800, lineHeight: 1.1 }}>{b.anno}</div>
+                  <div style={{ fontSize: 8, color: 'rgba(255,255,255,0.6)', marginTop: 1 }}>✓ rinnovato</div>
                 </div>
               ))}
               {/* Prossimo timbro */}
               <div style={{
                 width: 76, height: 76, borderRadius: '50%',
-                border: '2px dashed #ddd',
+                border: `2px dashed ${AZZURRO}`,
                 display: 'flex', flexDirection: 'column',
                 alignItems: 'center', justifyContent: 'center',
-                background: '#fafafa',
+                background: '#F0F7FC',
               }}>
-                <div style={{ fontSize: 9, color: '#ddd', fontWeight: 700, letterSpacing: '0.08em', fontFamily: 'serif' }}>ADMA</div>
-                <div style={{ fontSize: 17, color: '#ddd', fontWeight: 800, lineHeight: 1.1 }}>
-                  {badges.some(b => b.anno === new Date().getFullYear()) ? new Date().getFullYear() + 1 : new Date().getFullYear()}
-                </div>
-                <div style={{ fontSize: 8, color: '#ddd', marginTop: 1 }}>prossimo</div>
+                <div style={{ fontSize: 9, color: AZZURRO, fontWeight: 700, letterSpacing: '0.1em', opacity: 0.5 }}>ADMA</div>
+                <div style={{ fontSize: 17, color: AZZURRO, fontWeight: 800, lineHeight: 1.1, opacity: 0.5 }}>{prossimoBadge}</div>
+                <div style={{ fontSize: 8, color: AZZURRO, marginTop: 1, opacity: 0.4 }}>prossimo</div>
               </div>
             </div>
           )}
