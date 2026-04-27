@@ -1,6 +1,10 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { supabase } from '../../../lib/supabase'
+import HeaderADMA from '../../components/HeaderADMA'
+
+const BLU = '#1A7AB8'
+const AZZURRO = '#29ABE2'
 
 export default function Admin() {
   const [registrazioni, setRegistrazioni] = useState<any[]>([])
@@ -22,17 +26,12 @@ export default function Admin() {
 
   async function loadData() {
     const { data: reg } = await supabase
-      .from('registration_requests')
-      .select('*')
-      .eq('stato', 'pending')
+      .from('registration_requests').select('*').eq('stato', 'pending')
       .order('submitted_at', { ascending: false })
     setRegistrazioni(reg || [])
-
     const { data: rin } = await supabase
-      .from('renewals')
-      .select('*, groups(nome, paese, numero_erezione)')
-      .eq('stato', 'pending')
-      .order('submitted_at', { ascending: false })
+      .from('renewals').select('*, groups(nome, paese, numero_erezione)')
+      .eq('stato', 'pending').order('submitted_at', { ascending: false })
     setRinnovi(rin || [])
   }
 
@@ -54,97 +53,78 @@ export default function Admin() {
   }
 
   async function rifiutaRegistrazione(id: string) {
-    await supabase.from('registration_requests')
-      .update({ stato: 'rejected', reviewed_at: new Date().toISOString() })
-      .eq('id', id)
+    await supabase.from('registration_requests').update({ stato: 'rejected', reviewed_at: new Date().toISOString() }).eq('id', id)
     await loadData()
   }
 
   async function approvaRinnovo(r: any) {
     const annoCorrente = new Date().getFullYear()
     const nuovaScadenza = `${annoCorrente + 1}-03-31`
-
     await supabase.from('groups').update({
-      referente: r.referente,
-      email: r.email,
-      telefono: r.telefono,
-      numero_membri: r.numero_membri,
-      nome_presidente: r.nome_presidente,
-      cognome_presidente: r.cognome_presidente,
-      nome_animatore: r.nome_animatore,
-      cognome_animatore: r.cognome_animatore,
-      scadenza: nuovaScadenza,
+      referente: r.referente, email: r.email, telefono: r.telefono,
+      numero_membri: r.numero_membri, nome_presidente: r.nome_presidente,
+      cognome_presidente: r.cognome_presidente, nome_animatore: r.nome_animatore,
+      cognome_animatore: r.cognome_animatore, scadenza: nuovaScadenza,
     }).eq('id', r.group_id)
-
-    await supabase.from('renewals')
-      .update({ stato: 'approved', reviewed_at: new Date().toISOString() })
-      .eq('id', r.id)
-
-    await supabase.from('badges')
-      .upsert({ group_id: r.group_id, anno: annoCorrente }, { onConflict: 'group_id,anno' })
-
+    await supabase.from('renewals').update({ stato: 'approved', reviewed_at: new Date().toISOString() }).eq('id', r.id)
+    await supabase.from('badges').upsert({ group_id: r.group_id, anno: annoCorrente }, { onConflict: 'group_id,anno' })
     alert(`Rinnovo ${annoCorrente} approvato!\nTimbro ${annoCorrente} assegnato.\nNuova scadenza: 31 marzo ${annoCorrente + 1}`)
     await loadData()
   }
 
   async function rifiutaRinnovo(id: string) {
-    await supabase.from('renewals')
-      .update({ stato: 'rejected', reviewed_at: new Date().toISOString() })
-      .eq('id', id)
+    await supabase.from('renewals').update({ stato: 'rejected', reviewed_at: new Date().toISOString() }).eq('id', id)
     await loadData()
   }
 
+  if (loading) return (
+    <div style={{ minHeight: '100vh', background: '#F0F7FC' }}>
+      <HeaderADMA />
+      <div style={{ padding: '2rem', textAlign: 'center', color: '#888' }}>Caricamento...</div>
+    </div>
+  )
+
   const cardStyle = {
-    background: 'white',
-    border: '0.5px solid #e5e5e5',
-    borderRadius: 12,
-    padding: '0.85rem 1rem',
-    marginBottom: 9,
+    background: 'white', borderRadius: 12, padding: '1rem',
+    marginBottom: 10, boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
+    borderTop: `3px solid ${AZZURRO}`,
   }
 
-  const btnOk = {
-    background: '#1D9E75', color: 'white', border: 'none',
-    padding: '6px 13px', borderRadius: 8, fontSize: 13, cursor: 'pointer'
+  const sectionTitle = {
+    fontSize: 11, fontWeight: 600 as const, color: BLU,
+    textTransform: 'uppercase' as const, letterSpacing: '0.06em',
+    marginBottom: '0.5rem',
   }
-
-  const btnNo = {
-    background: '#E24B4A', color: 'white', border: 'none',
-    padding: '6px 13px', borderRadius: 8, fontSize: 13, cursor: 'pointer'
-  }
-
-  if (loading) return <div style={{ padding: '2rem', textAlign: 'center' }}>Caricamento...</div>
 
   return (
-    <main style={{ minHeight: '100vh', background: '#f9f9f7', padding: '1.5rem' }}>
-      <div style={{ maxWidth: 700, margin: '0 auto' }}>
+    <div style={{ minHeight: '100vh', background: '#F0F7FC' }}>
+      <HeaderADMA />
+      <div style={{ maxWidth: 700, margin: '0 auto', padding: '1.5rem 1rem' }}>
 
-        {/* Header */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'white', border: '0.5px solid #e5e5e5', borderRadius: 12, padding: '0.75rem 1rem', marginBottom: '1rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <div style={{ width: 34, height: 34, borderRadius: '50%', background: '#EEEDFE', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, color: '#534AB7', fontWeight: 500 }}>PR</div>
-            <div>
-              <div style={{ fontSize: 14, fontWeight: 500 }}>Pannello Admin</div>
-              <div style={{ fontSize: 12, color: '#888' }}>Primaria di Valdocco</div>
-            </div>
-          </div>
-          <a href="/dashboard/mappa" style={{ fontSize: 12, color: '#185FA5', textDecoration: 'underline' }}>← Mappa</a>
+        <div style={{ marginBottom: '1rem' }}>
+          <div style={{ fontSize: 18, fontWeight: 700, color: BLU }}>Pannello Admin</div>
+          <div style={{ fontSize: 13, color: '#888' }}>Primaria di Valdocco · gestione registrazioni e rinnovi</div>
         </div>
 
         {/* Tab */}
-        <div style={{ display: 'flex', background: '#f5f5f3', borderRadius: 8, padding: 3, width: 'fit-content', marginBottom: '1rem' }}>
+        <div style={{ display: 'flex', background: 'white', borderRadius: 8, padding: 3, width: 'fit-content', marginBottom: '1rem', border: '0.5px solid #dce8f0' }}>
           {(['registrazioni', 'rinnovi'] as const).map(t => (
             <button key={t} onClick={() => setTab(t)} style={{
-              padding: '5px 16px', fontSize: 13,
-              border: tab === t ? '0.5px solid #e5e5e5' : 'none',
-              background: tab === t ? 'white' : 'none',
-              borderRadius: 6, cursor: 'pointer', fontWeight: tab === t ? 500 : 400
+              padding: '6px 18px', fontSize: 13,
+              background: tab === t ? BLU : 'none',
+              color: tab === t ? 'white' : '#888',
+              border: 'none', borderRadius: 6, cursor: 'pointer', fontWeight: tab === t ? 600 : 400,
             }}>
               {t.charAt(0).toUpperCase() + t.slice(1)}
               {t === 'registrazioni' && registrazioni.length > 0 && (
-                <span style={{ background: '#FAEEDA', color: '#854F0B', padding: '1px 6px', borderRadius: 999, fontSize: 11, marginLeft: 6 }}>{registrazioni.length}</span>
+                <span style={{ background: '#FAEEDA', color: '#854F0B', padding: '1px 6px', borderRadius: 999, fontSize: 11, marginLeft: 6 }}>
+                  {registrazioni.length}
+                </span>
               )}
               {t === 'rinnovi' && rinnovi.length > 0 && (
-                <span style={{ background: '#FAEEDA', color: '#854F0B', padding: '1px 6px', borderRadius: 999, fontSize: 11, marginLeft: 6 }}>{rinnovi.length}</span>
+                <span style={{ background: '#E3F4FC', color: BLU, padding: '1px 6px', borderRadius: 999, fontSize: 11, marginLeft: 6 }}>
+                  {rinnovi.length}
+                </span>
               )}
             </button>
           ))}
@@ -154,37 +134,41 @@ export default function Admin() {
         {tab === 'registrazioni' && (
           <div>
             {registrazioni.length === 0 && (
-              <div style={{ textAlign: 'center', color: '#888', fontSize: 14, padding: '2rem' }}>Nessuna richiesta in attesa.</div>
+              <div style={{ textAlign: 'center', color: '#888', fontSize: 14, padding: '3rem' }}>Nessuna richiesta in attesa.</div>
             )}
             {registrazioni.map(r => (
               <div key={r.id} style={cardStyle}>
-                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 8 }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 10 }}>
                   <div>
-                    <div style={{ fontSize: 15, fontWeight: 500 }}>{r.nome}</div>
-                    <div style={{ fontSize: 13, color: '#888' }}>{r.paese} · {new Date(r.submitted_at).toLocaleDateString('it-IT')}</div>
+                    <div style={{ fontSize: 15, fontWeight: 600, color: BLU }}>{r.nome}</div>
+                    <div style={{ fontSize: 12, color: '#888' }}>{r.paese}{r.citta ? ` · ${r.citta}` : ''} · {new Date(r.submitted_at).toLocaleDateString('it-IT')}</div>
                   </div>
-                  <span style={{ background: '#FAEEDA', color: '#854F0B', padding: '2px 9px', borderRadius: 999, fontSize: 12 }}>Prima registrazione</span>
+                  <span style={{ background: '#FAEEDA', color: '#854F0B', padding: '2px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500 }}>
+                    Prima registrazione
+                  </span>
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, marginBottom: 10 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 12 }}>
                   {[
                     ['Presidente', r.nome_presidente ? `${r.nome_presidente} ${r.cognome_presidente}` : r.referente],
                     ['Animatore', r.nome_animatore ? `${r.nome_animatore} ${r.cognome_animatore}` : '—'],
                     ['Membri', r.numero_membri],
                     ['Email', r.email],
-                    ['Telefono', r.telefono],
                     ['N. Erezione', r.numero_erezione],
                     ['N. Aggregazione', r.numero_aggregazione],
-                    ['Data aggregazione', r.data_aggregazione_originale],
                   ].map(([label, value]) => (
                     <div key={label as string}>
-                      <div style={{ fontSize: 11, color: '#888' }}>{label}</div>
-                      <div style={{ fontSize: 13 }}>{value || '—'}</div>
+                      <div style={{ fontSize: 10, color: '#aaa', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{label}</div>
+                      <div style={{ fontSize: 13, color: '#333' }}>{value || '—'}</div>
                     </div>
                   ))}
                 </div>
                 <div style={{ display: 'flex', gap: 8 }}>
-                  <button style={btnOk} onClick={() => approvaRegistrazione(r)}>Approva e crea account</button>
-                  <button style={btnNo} onClick={() => rifiutaRegistrazione(r.id)}>Rifiuta</button>
+                  <button onClick={() => approvaRegistrazione(r)} style={{ background: BLU, color: 'white', border: 'none', padding: '7px 16px', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
+                    Approva e crea account
+                  </button>
+                  <button onClick={() => rifiutaRegistrazione(r.id)} style={{ background: 'none', color: '#E24B4A', border: '0.5px solid #E24B4A', padding: '7px 16px', borderRadius: 8, fontSize: 13, cursor: 'pointer' }}>
+                    Rifiuta
+                  </button>
                 </div>
               </div>
             ))}
@@ -195,41 +179,45 @@ export default function Admin() {
         {tab === 'rinnovi' && (
           <div>
             {rinnovi.length === 0 && (
-              <div style={{ textAlign: 'center', color: '#888', fontSize: 14, padding: '2rem' }}>Nessun rinnovo in attesa.</div>
+              <div style={{ textAlign: 'center', color: '#888', fontSize: 14, padding: '3rem' }}>Nessun rinnovo in attesa.</div>
             )}
             {rinnovi.map(r => (
               <div key={r.id} style={cardStyle}>
-                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 8 }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 10 }}>
                   <div>
-                    <div style={{ fontSize: 15, fontWeight: 500 }}>{r.groups?.nome}</div>
-                    <div style={{ fontSize: 13, color: '#888' }}>{r.groups?.paese} · {new Date(r.submitted_at).toLocaleDateString('it-IT')}</div>
+                    <div style={{ fontSize: 15, fontWeight: 600, color: BLU }}>{r.groups?.nome}</div>
+                    <div style={{ fontSize: 12, color: '#888' }}>{r.groups?.paese} · {new Date(r.submitted_at).toLocaleDateString('it-IT')}</div>
                   </div>
-                  <span style={{ background: '#E6F1FB', color: '#185FA5', padding: '2px 9px', borderRadius: 999, fontSize: 12 }}>Rinnovo</span>
+                  <span style={{ background: '#E3F4FC', color: BLU, padding: '2px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500 }}>
+                    Rinnovo {new Date().getFullYear()}
+                  </span>
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, marginBottom: 10 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 12 }}>
                   {[
                     ['Presidente', r.nome_presidente ? `${r.nome_presidente} ${r.cognome_presidente}` : '—'],
                     ['Animatore', r.nome_animatore ? `${r.nome_animatore} ${r.cognome_animatore}` : '—'],
                     ['Membri aggiornati', r.numero_membri],
                     ['Email', r.email],
-                    ['Telefono', r.telefono],
                   ].map(([label, value]) => (
                     <div key={label as string}>
-                      <div style={{ fontSize: 11, color: '#888' }}>{label}</div>
-                      <div style={{ fontSize: 13 }}>{value || '—'}</div>
+                      <div style={{ fontSize: 10, color: '#aaa', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{label}</div>
+                      <div style={{ fontSize: 13, color: '#333' }}>{value || '—'}</div>
                     </div>
                   ))}
                 </div>
                 <div style={{ display: 'flex', gap: 8 }}>
-                  <button style={btnOk} onClick={() => approvaRinnovo(r)}>Approva rinnovo {new Date().getFullYear()}</button>
-                  <button style={btnNo} onClick={() => rifiutaRinnovo(r.id)}>Rifiuta</button>
+                  <button onClick={() => approvaRinnovo(r)} style={{ background: BLU, color: 'white', border: 'none', padding: '7px 16px', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
+                    Approva rinnovo {new Date().getFullYear()}
+                  </button>
+                  <button onClick={() => rifiutaRinnovo(r.id)} style={{ background: 'none', color: '#E24B4A', border: '0.5px solid #E24B4A', padding: '7px 16px', borderRadius: 8, fontSize: 13, cursor: 'pointer' }}>
+                    Rifiuta
+                  </button>
                 </div>
               </div>
             ))}
           </div>
         )}
-
       </div>
-    </main>
+    </div>
   )
 }

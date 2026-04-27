@@ -2,30 +2,22 @@
 import { useState } from 'react'
 import { supabase } from '../../lib/supabase'
 
+const BLU = '#1A7AB8'
+const AZZURRO = '#29ABE2'
+
 export default function Registrazione() {
   const [sending, setSending] = useState(false)
   const [sent, setSent] = useState(false)
   const [error, setError] = useState('')
   const [diploma, setDiploma] = useState<File | null>(null)
   const [form, setForm] = useState({
-    nome: '',
-    citta: '',
-    paese: '',
-    numero_erezione: '',
-    data_erezione: '',
-    numero_aggregazione: '',
-    data_aggregazione_originale: '',
-    opera: '',
-    tipo_appartenenza: '',
-    congregazione: '',
-    diocesi: '',
-    nome_presidente: '',
-    cognome_presidente: '',
-    nome_animatore: '',
-    cognome_animatore: '',
-    email: '',
-    telefono: '',
-    numero_membri: '',
+    nome: '', citta: '', paese: '',
+    numero_erezione: '', data_erezione: '',
+    numero_aggregazione: '', data_aggregazione_originale: '',
+    opera: '', tipo_appartenenza: '', congregazione: '', diocesi: '',
+    nome_presidente: '', cognome_presidente: '',
+    nome_animatore: '', cognome_animatore: '',
+    email: '', telefono: '', numero_membri: '',
   })
 
   function update(field: string, value: string) {
@@ -56,66 +48,50 @@ export default function Registrazione() {
     }
     setSending(true)
     setError('')
-
     let diplomaUrl = null
-    if (diploma) {
-      diplomaUrl = await uploadDiploma(diploma, form.nome)
-    }
-
+    if (diploma) diplomaUrl = await uploadDiploma(diploma, form.nome)
     const { error } = await supabase.from('registration_requests').insert({
-      nome: form.nome,
-      citta: form.citta,
-      paese: form.paese,
-      numero_erezione: form.numero_erezione,
-      data_erezione: form.data_erezione,
-      numero_aggregazione: form.numero_aggregazione,
-      data_aggregazione_originale: form.data_aggregazione_originale,
-      opera: form.opera,
-      tipo_appartenenza: form.tipo_appartenenza,
+      ...form,
+      referente: `${form.nome_presidente} ${form.cognome_presidente}`,
+      numero_membri: form.numero_membri ? parseInt(form.numero_membri) : null,
       congregazione: form.tipo_appartenenza === 'congregazione' ? form.congregazione : null,
       diocesi: form.tipo_appartenenza === 'diocesi' ? form.diocesi : null,
-      referente: `${form.nome_presidente} ${form.cognome_presidente}`,
-      nome_presidente: form.nome_presidente,
-      cognome_presidente: form.cognome_presidente,
-      nome_animatore: form.nome_animatore,
-      cognome_animatore: form.cognome_animatore,
-      email: form.email,
-      telefono: form.telefono,
-      numero_membri: form.numero_membri ? parseInt(form.numero_membri) : null,
       diploma_url: diplomaUrl,
     })
-    if (error) {
-      setError('Errore durante l\'invio. Riprova.')
-      setSending(false)
-      return
-    }
+    if (error) { setError('Errore durante l\'invio. Riprova.'); setSending(false); return; }
     setSent(true)
     setSending(false)
   }
 
   const inputStyle = {
     width: '100%', padding: '9px 12px', fontSize: 14,
-    border: '0.5px solid #ddd', borderRadius: 8, boxSizing: 'border-box' as const,
+    border: '0.5px solid #dce8f0', borderRadius: 8,
+    background: '#F8FBFD', color: '#333',
+    boxSizing: 'border-box' as const, outline: 'none',
   }
-  const labelStyle = { display: 'block' as const, fontSize: 13, color: '#888', marginBottom: 4 }
+  const labelStyle = { display: 'block' as const, fontSize: 12, color: '#888', marginBottom: 4, letterSpacing: '0.04em' }
   const sectionTitle = {
-    fontSize: 11, fontWeight: 500, color: '#888', textTransform: 'uppercase' as const,
-    letterSpacing: '0.05em', marginBottom: '0.6rem', paddingBottom: '0.4rem',
-    borderBottom: '0.5px solid #e5e5e5',
+    fontSize: 11, fontWeight: 600 as const, color: BLU,
+    textTransform: 'uppercase' as const, letterSpacing: '0.06em',
+    marginBottom: '0.75rem', paddingBottom: '0.5rem',
+    borderBottom: `2px solid ${AZZURRO}`,
   }
 
   return (
-    <main style={{ minHeight: '100vh', background: '#f9f9f7', padding: '1.5rem' }}>
-      <div style={{ maxWidth: 520, margin: '0 auto' }}>
+    <main style={{ minHeight: '100vh', background: '#F0F7FC', padding: '1.5rem' }}>
+      <div style={{ maxWidth: 540, margin: '0 auto' }}>
 
-        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-          <div style={{ width: 52, height: 52, borderRadius: '50%', background: '#EEEDFE', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, color: '#534AB7', fontWeight: 500, margin: '0 auto 10px' }}>A</div>
-          <div style={{ fontSize: 20, fontWeight: 500 }}>Richiesta di registrazione</div>
-          <div style={{ fontSize: 13, color: '#888', marginTop: 4 }}>Compila il modulo per richiedere la registrazione alla Primaria di Valdocco</div>
+        {/* Header */}
+        <div style={{ textAlign: 'center', marginBottom: '1.75rem' }}>
+          <img src="/adma-logo.png" alt="ADMA" style={{ width: 140, margin: '0 auto 12px', display: 'block' }} />
+          <div style={{ fontSize: 18, fontWeight: 700, color: BLU }}>Richiesta di registrazione</div>
+          <div style={{ fontSize: 13, color: '#888', marginTop: 4 }}>
+            Compila il modulo per richiedere la registrazione alla Primaria di Valdocco
+          </div>
         </div>
 
         {!sent ? (
-          <div style={{ background: 'white', border: '0.5px solid #e5e5e5', borderRadius: 12, padding: '1.5rem' }}>
+          <div style={{ background: 'white', borderRadius: 14, padding: '1.75rem', boxShadow: '0 2px 12px rgba(26,122,184,0.08)' }}>
 
             {error && (
               <div style={{ background: '#FCEBEB', border: '0.5px solid #F7C1C1', color: '#A32D2D', borderRadius: 8, padding: '0.6rem 0.85rem', fontSize: 13, marginBottom: '1rem' }}>
@@ -124,87 +100,51 @@ export default function Registrazione() {
             )}
 
             {/* Dati identificativi */}
-            <div style={{ marginBottom: '1.25rem' }}>
+            <div style={{ marginBottom: '1.5rem' }}>
               <div style={sectionTitle}>Dati identificativi — non modificabili dopo l'approvazione</div>
 
               <div style={{ marginBottom: '0.8rem' }}>
                 <label style={labelStyle}>Nome del gruppo *</label>
                 <input style={inputStyle} value={form.nome} onChange={e => update('nome', e.target.value)} placeholder="es. ADMA Barcellona" />
               </div>
-
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: '0.8rem' }}>
-                <div>
-                  <label style={labelStyle}>Città *</label>
-                  <input style={inputStyle} value={form.citta} onChange={e => update('citta', e.target.value)} placeholder="es. Barcellona" />
-                </div>
-                <div>
-                  <label style={labelStyle}>Paese *</label>
-                  <input style={inputStyle} value={form.paese} onChange={e => update('paese', e.target.value)} placeholder="es. Spagna" />
-                </div>
+                <div><label style={labelStyle}>Città *</label><input style={inputStyle} value={form.citta} onChange={e => update('citta', e.target.value)} placeholder="es. Barcellona" /></div>
+                <div><label style={labelStyle}>Paese *</label><input style={inputStyle} value={form.paese} onChange={e => update('paese', e.target.value)} placeholder="es. Spagna" /></div>
               </div>
-
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: '0.8rem' }}>
-                <div>
-                  <label style={labelStyle}>N. di Erezione *</label>
-                  <input style={inputStyle} value={form.numero_erezione} onChange={e => update('numero_erezione', e.target.value)} placeholder="es. ES-2024-001" />
-                </div>
-                <div>
-                  <label style={labelStyle}>Data di Erezione *</label>
-                  <input type="date" style={inputStyle} value={form.data_erezione} onChange={e => update('data_erezione', e.target.value)} />
-                </div>
+                <div><label style={labelStyle}>N. di Erezione *</label><input style={inputStyle} value={form.numero_erezione} onChange={e => update('numero_erezione', e.target.value)} placeholder="es. ES-2024-001" /></div>
+                <div><label style={labelStyle}>Data di Erezione *</label><input type="date" style={inputStyle} value={form.data_erezione} onChange={e => update('data_erezione', e.target.value)} /></div>
               </div>
-
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: '0.8rem' }}>
-                <div>
-                  <label style={labelStyle}>N. di aggregazione *</label>
-                  <input style={inputStyle} value={form.numero_aggregazione} onChange={e => update('numero_aggregazione', e.target.value)} placeholder="es. 2024-047" />
-                </div>
-                <div>
-                  <label style={labelStyle}>Data di aggregazione *</label>
-                  <input type="date" style={inputStyle} value={form.data_aggregazione_originale} onChange={e => update('data_aggregazione_originale', e.target.value)} />
-                </div>
+                <div><label style={labelStyle}>N. di aggregazione *</label><input style={inputStyle} value={form.numero_aggregazione} onChange={e => update('numero_aggregazione', e.target.value)} placeholder="es. 2024-047" /></div>
+                <div><label style={labelStyle}>Data di aggregazione *</label><input type="date" style={inputStyle} value={form.data_aggregazione_originale} onChange={e => update('data_aggregazione_originale', e.target.value)} /></div>
               </div>
-
               <div style={{ marginBottom: '0.8rem' }}>
                 <label style={labelStyle}>Opera presso cui il gruppo è eretto *</label>
                 <input style={inputStyle} value={form.opera} onChange={e => update('opera', e.target.value)} placeholder="es. Parrocchia Maria Ausiliatrice" />
               </div>
-
               <div style={{ marginBottom: '0.8rem' }}>
                 <label style={labelStyle}>Appartenenza *</label>
-                <div style={{ display: 'flex', gap: 12, marginBottom: form.tipo_appartenenza ? '0.6rem' : 0 }}>
-                  {[
-                    { val: 'congregazione', label: 'Congregazione religiosa' },
-                    { val: 'diocesi', label: 'Diocesi' },
-                  ].map(opt => (
-                    <label key={opt.val} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 14, cursor: 'pointer' }}>
-                      <input
-                        type="radio"
-                        name="tipo_appartenenza"
-                        value={opt.val}
+                <div style={{ display: 'flex', gap: 16, marginBottom: form.tipo_appartenenza ? '0.6rem' : 0 }}>
+                  {[{ val: 'congregazione', label: 'Congregazione religiosa' }, { val: 'diocesi', label: 'Diocesi' }].map(opt => (
+                    <label key={opt.val} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 14, cursor: 'pointer', color: '#333' }}>
+                      <input type="radio" name="tipo_appartenenza" value={opt.val}
                         checked={form.tipo_appartenenza === opt.val}
-                        onChange={e => update('tipo_appartenenza', e.target.value)}
-                      />
+                        onChange={e => update('tipo_appartenenza', e.target.value)} />
                       {opt.label}
                     </label>
                   ))}
                 </div>
-
                 {form.tipo_appartenenza === 'congregazione' && (
                   <div style={{ marginTop: '0.5rem' }}>
                     <label style={labelStyle}>Congregazione *</label>
-                    <select
-                      style={{ ...inputStyle, background: 'white' }}
-                      value={form.congregazione}
-                      onChange={e => update('congregazione', e.target.value)}
-                    >
+                    <select style={{ ...inputStyle, background: 'white' }} value={form.congregazione} onChange={e => update('congregazione', e.target.value)}>
                       <option value="">Seleziona...</option>
                       <option value="SDB">SDB — Salesiani di Don Bosco</option>
                       <option value="FMA">FMA — Figlie di Maria Ausiliatrice</option>
                     </select>
                   </div>
                 )}
-
                 {form.tipo_appartenenza === 'diocesi' && (
                   <div style={{ marginTop: '0.5rem' }}>
                     <label style={labelStyle}>Diocesi *</label>
@@ -215,44 +155,25 @@ export default function Registrazione() {
             </div>
 
             {/* Responsabili e contatti */}
-            <div style={{ marginBottom: '1.25rem' }}>
+            <div style={{ marginBottom: '1.5rem' }}>
               <div style={sectionTitle}>Responsabili e contatti — aggiornabili ad ogni rinnovo</div>
 
-              <div style={{ marginBottom: '0.5rem', fontSize: 12, color: '#555', fontWeight: 500 }}>Presidente</div>
+              <div style={{ marginBottom: '0.4rem', fontSize: 12, color: BLU, fontWeight: 600 }}>Presidente</div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: '0.8rem' }}>
-                <div>
-                  <label style={labelStyle}>Nome *</label>
-                  <input style={inputStyle} value={form.nome_presidente} onChange={e => update('nome_presidente', e.target.value)} placeholder="Nome" />
-                </div>
-                <div>
-                  <label style={labelStyle}>Cognome *</label>
-                  <input style={inputStyle} value={form.cognome_presidente} onChange={e => update('cognome_presidente', e.target.value)} placeholder="Cognome" />
-                </div>
+                <div><label style={labelStyle}>Nome *</label><input style={inputStyle} value={form.nome_presidente} onChange={e => update('nome_presidente', e.target.value)} placeholder="Nome" /></div>
+                <div><label style={labelStyle}>Cognome *</label><input style={inputStyle} value={form.cognome_presidente} onChange={e => update('cognome_presidente', e.target.value)} placeholder="Cognome" /></div>
               </div>
 
-              <div style={{ marginBottom: '0.5rem', fontSize: 12, color: '#555', fontWeight: 500 }}>Animatore spirituale locale</div>
+              <div style={{ marginBottom: '0.4rem', fontSize: 12, color: BLU, fontWeight: 600 }}>Animatore spirituale locale</div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: '0.8rem' }}>
-                <div>
-                  <label style={labelStyle}>Nome *</label>
-                  <input style={inputStyle} value={form.nome_animatore} onChange={e => update('nome_animatore', e.target.value)} placeholder="Nome" />
-                </div>
-                <div>
-                  <label style={labelStyle}>Cognome *</label>
-                  <input style={inputStyle} value={form.cognome_animatore} onChange={e => update('cognome_animatore', e.target.value)} placeholder="Cognome" />
-                </div>
+                <div><label style={labelStyle}>Nome *</label><input style={inputStyle} value={form.nome_animatore} onChange={e => update('nome_animatore', e.target.value)} placeholder="Nome" /></div>
+                <div><label style={labelStyle}>Cognome *</label><input style={inputStyle} value={form.cognome_animatore} onChange={e => update('cognome_animatore', e.target.value)} placeholder="Cognome" /></div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: '0.8rem' }}>
-                <div>
-                  <label style={labelStyle}>Email del gruppo *</label>
-                  <input type="email" style={inputStyle} value={form.email} onChange={e => update('email', e.target.value)} placeholder="email@esempio.com" />
-                </div>
-                <div>
-                  <label style={labelStyle}>Telefono</label>
-                  <input style={inputStyle} value={form.telefono} onChange={e => update('telefono', e.target.value)} placeholder="+1 ..." />
-                </div>
+                <div><label style={labelStyle}>Email del gruppo *</label><input type="email" style={inputStyle} value={form.email} onChange={e => update('email', e.target.value)} placeholder="email@esempio.com" /></div>
+                <div><label style={labelStyle}>Telefono</label><input style={inputStyle} value={form.telefono} onChange={e => update('telefono', e.target.value)} placeholder="+1 ..." /></div>
               </div>
-
               <div>
                 <label style={labelStyle}>Numero di membri *</label>
                 <input type="number" style={inputStyle} value={form.numero_membri} onChange={e => update('numero_membri', e.target.value)} placeholder="es. 30" min="1" />
@@ -260,22 +181,20 @@ export default function Registrazione() {
             </div>
 
             {/* Documentazione */}
-            <div style={{ marginBottom: '1.25rem' }}>
+            <div style={{ marginBottom: '1.5rem' }}>
               <div style={sectionTitle}>Documentazione</div>
-              <label style={labelStyle}>
-                Diploma di aggregazione <span style={{ fontSize: 11, color: '#aaa' }}>(facoltativo · JPG, PNG o PDF)</span>
-              </label>
+              <label style={labelStyle}>Diploma di aggregazione <span style={{ fontSize: 11, color: '#aaa' }}>(facoltativo · JPG, PNG o PDF)</span></label>
               <label style={{
                 display: 'flex', alignItems: 'center', gap: 12,
-                border: diploma ? '0.5px solid #1D9E75' : '1px dashed #ddd',
+                border: diploma ? `1px solid ${AZZURRO}` : '1px dashed #dce8f0',
                 borderRadius: 8, padding: '12px 16px', cursor: 'pointer',
-                background: diploma ? '#EAF3DE' : '#fafafa', marginTop: 4,
+                background: diploma ? '#E3F4FC' : '#F8FBFD', marginTop: 4,
               }}>
-                <div style={{ width: 36, height: 36, borderRadius: 8, background: diploma ? '#1D9E75' : '#f0f0ee', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, flexShrink: 0 }}>
+                <div style={{ width: 36, height: 36, borderRadius: 8, background: diploma ? AZZURRO : '#eef5fb', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, flexShrink: 0 }}>
                   {diploma ? '✓' : '📎'}
                 </div>
                 <div>
-                  <div style={{ fontSize: 13, fontWeight: 500, color: diploma ? '#1D9E75' : '#555' }}>
+                  <div style={{ fontSize: 13, fontWeight: 500, color: diploma ? BLU : '#888' }}>
                     {diploma ? diploma.name : 'Clicca per allegare il diploma'}
                   </div>
                   <div style={{ fontSize: 11, color: '#aaa', marginTop: 2 }}>
@@ -291,25 +210,33 @@ export default function Registrazione() {
               )}
             </div>
 
-            <div style={{ background: '#f5f5f3', borderRadius: 8, padding: '0.7rem 0.9rem', fontSize: 12, color: '#888', marginBottom: '1rem' }}>
+            <div style={{ background: '#E3F4FC', borderRadius: 8, padding: '0.75rem 1rem', fontSize: 12, color: BLU, marginBottom: '1.25rem' }}>
               Dopo l'approvazione della Primaria riceverete via email le credenziali di accesso. La registrazione sarà valida per 12 mesi.
             </div>
 
-            <button onClick={handleSubmit} disabled={sending}
-              style={{ width: '100%', background: '#1a1a1a', color: 'white', border: 'none', padding: 10, borderRadius: 8, fontSize: 14, fontWeight: 500, cursor: sending ? 'not-allowed' : 'pointer', opacity: sending ? 0.7 : 1 }}>
-              {sending ? 'Invio in corso...' : 'Invia richiesta di registrazione'}
+            <button onClick={handleSubmit} disabled={sending} style={{
+              width: '100%', background: sending ? '#93C8E8' : BLU,
+              color: 'white', border: 'none', padding: 11, borderRadius: 8,
+              fontSize: 14, fontWeight: 700, cursor: sending ? 'not-allowed' : 'pointer',
+            }}>
+              {sending ? 'Invio in corso...' : 'INVIA RICHIESTA DI REGISTRAZIONE'}
             </button>
 
             <div style={{ textAlign: 'center', marginTop: '1rem', fontSize: 13, color: '#888' }}>
-              Hai già un account? <a href="/" style={{ color: '#185FA5', textDecoration: 'underline' }}>Accedi</a>
+              Hai già un account?{' '}
+              <a href="/" style={{ color: BLU, fontWeight: 600, textDecoration: 'none' }}>Accedi</a>
             </div>
           </div>
         ) : (
-          <div style={{ background: '#EAF3DE', border: '0.5px solid #9FE1CB', borderRadius: 12, padding: '1.5rem', fontSize: 14, color: '#3B6D11' }}>
-            <div style={{ fontWeight: 500, marginBottom: 6 }}>Richiesta inviata con successo!</div>
-            La domanda è stata trasmessa alla Primaria di Valdocco. Riceverete le credenziali di accesso via email una volta approvata.
-            <div style={{ marginTop: '1rem' }}>
-              <a href="/" style={{ color: '#3B6D11', fontSize: 13 }}>← Torna al login</a>
+          <div style={{ background: '#E3F4FC', border: `0.5px solid ${AZZURRO}`, borderRadius: 14, padding: '2rem', textAlign: 'center', color: BLU }}>
+            <div style={{ fontSize: 40, marginBottom: 12 }}>✓</div>
+            <div style={{ fontWeight: 700, marginBottom: 8, fontSize: 16 }}>Richiesta inviata con successo!</div>
+            <div style={{ fontSize: 13, color: '#555' }}>
+              La domanda è stata trasmessa alla Primaria di Valdocco.<br />
+              Riceverete le credenziali di accesso via email una volta approvata.
+            </div>
+            <div style={{ marginTop: '1.5rem' }}>
+              <a href="/" style={{ color: BLU, fontSize: 13, fontWeight: 600, textDecoration: 'none' }}>← Torna al login</a>
             </div>
           </div>
         )}
