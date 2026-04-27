@@ -220,7 +220,7 @@ export default function Mappa() {
               )
             })}
           </div>
-        )}
+        
 
         {/* Chat */}
         {chatGroup && (
