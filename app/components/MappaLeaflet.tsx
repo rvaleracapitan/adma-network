@@ -15,6 +15,7 @@ interface Gruppo {
 
 interface Props {
   groups: Gruppo[]
+  myGroupId?: string
   searchTerm: string
   onSelectGroup: (g: Gruppo) => void
 }
@@ -22,7 +23,7 @@ interface Props {
 const BLU = '#1A7AB8'
 const AZZURRO = '#29ABE2'
 
-export default function MappaLeaflet({ groups, searchTerm, onSelectGroup }: Props) {
+export default function MappaLeaflet({ groups, myGroupId, searchTerm, onSelectGroup }: Props) {
   const mapRef = useRef<any>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const markersRef = useRef<any[]>([])
@@ -42,7 +43,13 @@ export default function MappaLeaflet({ groups, searchTerm, onSelectGroup }: Prop
         50% { transform: scale(1.6); opacity: 0.7; }
         100% { transform: scale(1); opacity: 1; }
       }
+      @keyframes myPulse {
+        0% { transform: scale(1); opacity: 0.8; }
+        50% { transform: scale(1.5); opacity: 0.3; }
+        100% { transform: scale(1); opacity: 0.8; }
+      }
       .marker-pulse { animation: pulse 1s ease-in-out infinite; }
+      .my-pulse { animation: myPulse 1.5s ease-in-out infinite; }
     `
     document.head.appendChild(style)
 
@@ -52,7 +59,6 @@ export default function MappaLeaflet({ groups, searchTerm, onSelectGroup }: Prop
         attribution: '© OpenStreetMap © CARTO'
       }).addTo(mapRef.current)
 
-      // Marker Valdocco con foto Basilica
       const valdoccoIcon = L.divIcon({
         html: `<div style="
           width:38px;height:38px;border-radius:50%;
@@ -103,6 +109,40 @@ export default function MappaLeaflet({ groups, searchTerm, onSelectGroup }: Prop
       groups.forEach(g => {
         if (!g.lat || !g.lng) return
 
+        // Marker del mio gruppo — pulsante e distintivo
+        if (g.id === myGroupId) {
+          const icon = L.divIcon({
+            html: `<div style="position:relative;width:28px;height:28px;">
+              <div class="my-pulse" style="
+                position:absolute;top:0;left:0;
+                width:28px;height:28px;border-radius:50%;
+                background:rgba(41,171,226,0.25);
+                border:2.5px solid ${AZZURRO};
+              "></div>
+              <div style="
+                position:absolute;top:7px;left:7px;
+                width:14px;height:14px;border-radius:50%;
+                background:${BLU};
+                border:2.5px solid white;
+                box-shadow:0 2px 6px rgba(0,0,0,0.35);
+              "></div>
+            </div>`,
+            iconSize: [28, 28],
+            iconAnchor: [14, 14],
+            className: ''
+          })
+          const marker = L.marker([g.lat, g.lng], { icon }).addTo(mapRef.current)
+          marker.bindPopup(`
+            <div style="font-family:sans-serif;text-align:center;min-width:150px;">
+              <div style="font-weight:700;color:${BLU};font-size:13px;">◆ Il mio gruppo</div>
+              <div style="font-size:12px;color:#555;margin-top:3px;">${g.nome}</div>
+              <div style="font-size:11px;color:#888;">${g.paese} · ${g.numero_membri} membri</div>
+            </div>
+          `)
+          markersRef.current.push(marker)
+          return
+        }
+
         const isAttivo = g.scadenza && new Date(g.scadenza) >= new Date()
         const isHighlighted = q.length > 0 && (
           g.nome?.toLowerCase().includes(q) ||
@@ -146,7 +186,7 @@ export default function MappaLeaflet({ groups, searchTerm, onSelectGroup }: Prop
         markersRef.current.push(marker)
       })
     })
-  }, [groups, searchTerm])
+  }, [groups, myGroupId, searchTerm])
 
   return <div ref={containerRef} style={{ width: '100%', height: '100%' }} />
 }

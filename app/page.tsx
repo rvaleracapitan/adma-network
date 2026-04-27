@@ -17,7 +17,7 @@ export default function Home() {
       setLoading(false)
       return
     }
-    window.location.href = '/dashboard/mappa'
+    window.location.href = '/dashboard/profilo'
     setLoading(false)
   }
 
