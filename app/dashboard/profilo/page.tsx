@@ -1,6 +1,10 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { supabase } from '../../../lib/supabase'
+import HeaderADMA from '../../components/HeaderADMA'
+
+const ADMA_BLU = '#1A3A6B'
+const ADMA_ORO = '#C9A84C'
 
 export default function Profilo() {
   const [group, setGroup] = useState<any>(null)
@@ -20,116 +24,141 @@ export default function Profilo() {
     load()
   }, [])
 
-  if (loading) return <div style={{ padding: '2rem', textAlign: 'center' }}>Caricamento...</div>
+  if (loading) return (
+    <div style={{ minHeight: '100vh', background: '#F4F6FA' }}>
+      <HeaderADMA />
+      <div style={{ padding: '2rem', textAlign: 'center', color: '#888' }}>Caricamento...</div>
+    </div>
+  )
 
   const annoFondazione = group?.data_aggregazione_originale ? new Date(group.data_aggregazione_originale).getFullYear() : null
   const anniNellaRete = annoFondazione ? new Date().getFullYear() - annoFondazione : 0
+  const isAttivo = group?.scadenza && new Date(group.scadenza) >= new Date()
 
   return (
-    <main style={{ minHeight: '100vh', background: '#f9f9f7', padding: '1.5rem' }}>
-      <div style={{ maxWidth: 600, margin: '0 auto' }}>
+    <div style={{ minHeight: '100vh', background: '#F4F6FA' }}>
+      <HeaderADMA />
+      <div style={{ maxWidth: 600, margin: '0 auto', padding: '1.5rem 1rem' }}>
 
-        {/* Header */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'white', border: '0.5px solid #e5e5e5', borderRadius: 12, padding: '0.75rem 1rem', marginBottom: '1rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <div style={{ width: 34, height: 34, borderRadius: '50%', background: '#EEEDFE', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, color: '#534AB7', fontWeight: 500 }}>
+        {/* Card identità */}
+        <div style={{
+          background: ADMA_BLU, borderRadius: 14, padding: '1.75rem',
+          marginBottom: '1rem', position: 'relative', overflow: 'hidden',
+        }}>
+          <div style={{
+            position: 'absolute', top: -30, right: -30,
+            width: 120, height: 120, borderRadius: '50%',
+            background: 'rgba(201,168,76,0.08)',
+            border: `1px solid rgba(201,168,76,0.15)`,
+          }} />
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
+            <div style={{
+              width: 60, height: 60, borderRadius: '50%',
+              background: 'rgba(201,168,76,0.15)',
+              border: `2px solid ${ADMA_ORO}`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: 20, color: ADMA_ORO, fontWeight: 700, fontFamily: 'serif',
+              flexShrink: 0,
+            }}>
               {group?.nome?.slice(0, 2).toUpperCase()}
             </div>
             <div>
-              <div style={{ fontSize: 14, fontWeight: 500 }}>{group?.nome}</div>
-              <div style={{ fontSize: 12, color: '#888' }}>{group?.paese}</div>
+              <div style={{ fontSize: 18, fontWeight: 700, color: 'white', marginBottom: 2 }}>{group?.nome}</div>
+              <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.65)' }}>{group?.citta}, {group?.paese}</div>
+              {anniNellaRete > 0 && (
+                <div style={{ fontSize: 12, color: ADMA_ORO, marginTop: 4 }}>
+                  Aggregato all'ADMA Primaria da {anniNellaRete} anni
+                </div>
+              )}
             </div>
           </div>
-          <a href="/dashboard/mappa" style={{ fontSize: 12, color: '#185FA5', textDecoration: 'underline' }}>← Mappa</a>
+          <div style={{ marginTop: '1rem', display: 'flex', gap: 8 }}>
+            <span style={{
+              background: isAttivo ? 'rgba(29,106,58,0.4)' : 'rgba(255,255,255,0.1)',
+              color: isAttivo ? '#7FD4A0' : 'rgba(255,255,255,0.4)',
+              padding: '3px 12px', borderRadius: 999, fontSize: 11, fontWeight: 500,
+            }}>
+              {isAttivo ? '✓ Attivo' : 'Non attivo'}
+            </span>
+            <span style={{ background: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.5)', padding: '3px 12px', borderRadius: 999, fontSize: 11 }}>
+              Scadenza: {group?.scadenza || '—'}
+            </span>
+          </div>
         </div>
 
-        {/* Card principale */}
-        <div style={{ background: 'white', border: '0.5px solid #e5e5e5', borderRadius: 12, padding: '1.5rem', marginBottom: '1rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: '1.5rem' }}>
-            <div style={{ width: 64, height: 64, borderRadius: '50%', background: '#EEEDFE', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, color: '#534AB7', fontWeight: 500, flexShrink: 0 }}>
-              {group?.nome?.slice(0, 2).toUpperCase()}
-            </div>
-            <div>
-              <div style={{ fontSize: 18, fontWeight: 500 }}>{group?.nome}</div>
-              <div style={{ fontSize: 14, color: '#888' }}>{group?.citta}, {group?.paese}</div>
-              <div style={{ fontSize: 13, color: '#3B6D11', marginTop: 2 }}>
-                Aggregato dal {group?.data_aggregazione_originale ? new Date(group.data_aggregazione_originale).toLocaleDateString('it-IT') : '—'}
-                {anniNellaRete > 0 && ` · aggregato all'ADMA Primaria da ${anniNellaRete} anni`}
-              </div>
-            </div>
+        {/* Dati */}
+        <div style={{ background: 'white', borderRadius: 12, padding: '1.25rem', marginBottom: '1rem', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
+          <div style={{ fontSize: 11, fontWeight: 600, color: ADMA_BLU, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '1rem', paddingBottom: '0.5rem', borderBottom: `2px solid ${ADMA_ORO}` }}>
+            Dati del gruppo
           </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: '1.25rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
             {[
               ['N. di Erezione', group?.numero_erezione],
               ['N. di aggregazione', group?.numero_aggregazione],
+              ['Data aggregazione', group?.data_aggregazione_originale],
+              ['Opera', group?.opera],
+              ['Appartenenza', group?.congregazione || group?.diocesi || '—'],
+              ['Numero di membri', group?.numero_membri],
               ['Presidente', group?.nome_presidente ? `${group.nome_presidente} ${group.cognome_presidente}` : '—'],
               ['Animatore spirituale', group?.nome_animatore ? `${group.nome_animatore} ${group.cognome_animatore}` : '—'],
               ['Email', group?.email],
               ['Telefono', group?.telefono || '—'],
-              ['Numero di membri', group?.numero_membri],
-              ['Registrazione valida fino al', group?.scadenza],
             ].map(([label, value]) => (
               <div key={label as string}>
-                <div style={{ fontSize: 11, color: '#888' }}>{label}</div>
-                <div style={{ fontSize: 13, marginTop: 2 }}>{value || '—'}</div>
+                <div style={{ fontSize: 10, color: '#aaa', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 2 }}>{label}</div>
+                <div style={{ fontSize: 13, color: '#333' }}>{value || '—'}</div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Badge */}
-        <div style={{ background: 'white', border: '0.5px solid #e5e5e5', borderRadius: 12, padding: '1.5rem' }}>
-          <div style={{ fontSize: 14, fontWeight: 500, marginBottom: 4 }}>Timbri di rinnovo</div>
-          <div style={{ fontSize: 13, color: '#888', marginBottom: '1.25rem' }}>
+        {/* Badge timbri */}
+        <div style={{ background: 'white', borderRadius: 12, padding: '1.25rem', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
+          <div style={{ fontSize: 11, fontWeight: 600, color: ADMA_BLU, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4, paddingBottom: '0.5rem', borderBottom: `2px solid ${ADMA_ORO}` }}>
+            Timbri di rinnovo annuale
+          </div>
+          <div style={{ fontSize: 12, color: '#888', marginBottom: '1.1rem' }}>
             Ogni timbro rappresenta un anno di rinnovo confermato nella rete ADMA.
           </div>
-
           {badges.length === 0 ? (
-            <div style={{ textAlign: 'center', color: '#aaa', fontSize: 13, padding: '1.5rem 0' }}>
-              Nessun timbro ancora — il primo arriverà dopo il primo rinnovo approvato.
+            <div style={{ textAlign: 'center', color: '#bbb', fontSize: 13, padding: '1.5rem 0' }}>
+              Nessun timbro ancora — arriverà dopo il primo rinnovo approvato.
             </div>
           ) : (
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14 }}>
               {badges.map(b => (
                 <div key={b.id} style={{
-                  width: 72,
-                  height: 72,
-                  borderRadius: '50%',
-                  border: '2.5px solid #534AB7',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  background: '#EEEDFE',
+                  width: 76, height: 76, borderRadius: '50%',
+                  border: `2.5px solid ${ADMA_ORO}`,
+                  background: 'white',
+                  display: 'flex', flexDirection: 'column',
+                  alignItems: 'center', justifyContent: 'center',
+                  boxShadow: `0 0 0 4px rgba(201,168,76,0.1), 0 2px 6px rgba(0,0,0,0.08)`,
                   position: 'relative',
                 }}>
-                  <div style={{ fontSize: 10, color: '#534AB7', fontWeight: 500, letterSpacing: '0.05em' }}>ADMA</div>
-                  <div style={{ fontSize: 16, color: '#534AB7', fontWeight: 700 }}>{b.anno}</div>
-                  <div style={{ fontSize: 9, color: '#7F77DD' }}>✓ rinnovato</div>
+                  <div style={{ fontSize: 9, color: ADMA_ORO, fontWeight: 700, letterSpacing: '0.08em', fontFamily: 'serif' }}>ADMA</div>
+                  <div style={{ fontSize: 17, color: ADMA_BLU, fontWeight: 800, lineHeight: 1.1 }}>{b.anno}</div>
+                  <div style={{ fontSize: 8, color: '#bbb', marginTop: 1 }}>✓ rinnovato</div>
                 </div>
               ))}
-              {/* Timbro prossimo anno — in grigio */}
+              {/* Prossimo timbro */}
               <div style={{
-                width: 72,
-                height: 72,
-                borderRadius: '50%',
-                border: '2.5px dashed #ddd',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
+                width: 76, height: 76, borderRadius: '50%',
+                border: '2px dashed #ddd',
+                display: 'flex', flexDirection: 'column',
+                alignItems: 'center', justifyContent: 'center',
                 background: '#fafafa',
               }}>
-                <div style={{ fontSize: 10, color: '#ccc', fontWeight: 500 }}>ADMA</div>
-                <div style={{ fontSize: 16, color: '#ccc', fontWeight: 700 }}>{new Date().getFullYear() + (badges.some(b => b.anno === new Date().getFullYear()) ? 1 : 0)}</div>
-                <div style={{ fontSize: 9, color: '#ddd' }}>prossimo</div>
+                <div style={{ fontSize: 9, color: '#ddd', fontWeight: 700, letterSpacing: '0.08em', fontFamily: 'serif' }}>ADMA</div>
+                <div style={{ fontSize: 17, color: '#ddd', fontWeight: 800, lineHeight: 1.1 }}>
+                  {badges.some(b => b.anno === new Date().getFullYear()) ? new Date().getFullYear() + 1 : new Date().getFullYear()}
+                </div>
+                <div style={{ fontSize: 8, color: '#ddd', marginTop: 1 }}>prossimo</div>
               </div>
             </div>
           )}
         </div>
-
       </div>
-    </main>
+    </div>
   )
 }
