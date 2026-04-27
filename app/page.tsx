@@ -28,28 +28,30 @@ export default function Home() {
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
-      background: 'linear-gradient(160deg, #0D5C8C 0%, #1A7AB8 60%, #29ABE2 100%)',
+      background: 'linear-gradient(160deg, #E8F4FC 0%, #F0F7FC 60%, #ffffff 100%)',
       padding: '1.5rem',
     }}>
+
       <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-        <img src="/adma-logo.png" alt="ADMA Logo" style={{ width: 160, margin: '0 auto 12px', display: 'block', filter: 'brightness(0) invert(1)' }} />
-        <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', letterSpacing: '0.08em' }}>
+        <img src="/adma-logo.png" alt="ADMA Logo" style={{ width: 180, margin: '0 auto 12px', display: 'block' }} />
+        <div style={{ fontSize: 12, color: '#888', letterSpacing: '0.08em' }}>
           Rete mondiale dei gruppi aggregati · Primaria Valdocco
         </div>
       </div>
 
       <div style={{
         width: '100%', maxWidth: 380,
-        background: 'rgba(255,255,255,0.1)',
-        border: '0.5px solid rgba(255,255,255,0.3)',
+        background: 'white',
+        border: '0.5px solid #dce8f0',
         borderRadius: 16,
         padding: '1.75rem',
+        boxShadow: '0 4px 20px rgba(26,122,184,0.08)',
       }}>
         {error && (
           <div style={{
-            background: 'rgba(226,75,74,0.2)',
-            border: '0.5px solid rgba(226,75,74,0.5)',
-            color: '#FF8A89',
+            background: '#FCEBEB',
+            border: '0.5px solid #F7C1C1',
+            color: '#A32D2D',
             borderRadius: 8, padding: '0.6rem 0.85rem',
             fontSize: 13, marginBottom: '1rem'
           }}>
@@ -57,7 +59,7 @@ export default function Home() {
           </div>
         )}
         <div style={{ marginBottom: '1rem' }}>
-          <label style={{ display: 'block', fontSize: 12, color: 'rgba(255,255,255,0.7)', marginBottom: 6, letterSpacing: '0.05em' }}>
+          <label style={{ display: 'block', fontSize: 12, color: '#888', marginBottom: 6, letterSpacing: '0.05em' }}>
             EMAIL DEL GRUPPO
           </label>
           <input
@@ -67,14 +69,15 @@ export default function Home() {
             placeholder="email@esempio.com"
             style={{
               width: '100%', padding: '10px 14px', fontSize: 14,
-              background: 'rgba(255,255,255,0.15)',
-              border: '0.5px solid rgba(255,255,255,0.3)',
-              borderRadius: 8, color: 'white', boxSizing: 'border-box' as const, outline: 'none',
+              background: '#F8FBFD',
+              border: '0.5px solid #dce8f0',
+              borderRadius: 8, color: '#333',
+              boxSizing: 'border-box' as const, outline: 'none',
             }}
           />
         </div>
         <div style={{ marginBottom: '1.5rem' }}>
-          <label style={{ display: 'block', fontSize: 12, color: 'rgba(255,255,255,0.7)', marginBottom: 6, letterSpacing: '0.05em' }}>
+          <label style={{ display: 'block', fontSize: 12, color: '#888', marginBottom: 6, letterSpacing: '0.05em' }}>
             PASSWORD
           </label>
           <input
@@ -85,9 +88,10 @@ export default function Home() {
             onKeyDown={e => e.key === 'Enter' && handleLogin()}
             style={{
               width: '100%', padding: '10px 14px', fontSize: 14,
-              background: 'rgba(255,255,255,0.15)',
-              border: '0.5px solid rgba(255,255,255,0.3)',
-              borderRadius: 8, color: 'white', boxSizing: 'border-box' as const, outline: 'none',
+              background: '#F8FBFD',
+              border: '0.5px solid #dce8f0',
+              borderRadius: 8, color: '#333',
+              boxSizing: 'border-box' as const, outline: 'none',
             }}
           />
         </div>
@@ -96,8 +100,8 @@ export default function Home() {
           disabled={loading}
           style={{
             width: '100%',
-            background: loading ? 'rgba(255,255,255,0.3)' : 'white',
-            color: '#1A7AB8',
+            background: loading ? '#93C8E8' : '#1A7AB8',
+            color: 'white',
             border: 'none', padding: '11px', borderRadius: 8,
             fontSize: 14, fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer',
             letterSpacing: '0.05em',
@@ -107,14 +111,14 @@ export default function Home() {
         </button>
       </div>
 
-      <div style={{ textAlign: 'center', marginTop: '1.25rem', fontSize: 13, color: 'rgba(255,255,255,0.6)' }}>
+      <div style={{ textAlign: 'center', marginTop: '1.25rem', fontSize: 13, color: '#888' }}>
         Gruppo non registrato nel network?{' '}
-        <a href="/registrazione" style={{ color: 'white', fontWeight: 600 }}>
+        <a href="/registrazione" style={{ color: '#1A7AB8', fontWeight: 600, textDecoration: 'none' }}>
           Richiedi registrazione
         </a>
       </div>
 
-      <div style={{ marginTop: '3rem', fontSize: 11, color: 'rgba(255,255,255,0.3)', textAlign: 'center' }}>
+      <div style={{ marginTop: '3rem', fontSize: 11, color: '#bbb', textAlign: 'center' }}>
         Fondato da Don Bosco il 18 aprile 1869 · Basilica di Maria Ausiliatrice, Valdocco, Torino
       </div>
     </main>
