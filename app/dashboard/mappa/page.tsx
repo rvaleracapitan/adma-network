@@ -192,14 +192,17 @@ export default function Mappa() {
                   {selectedGroup?.id === g.id && (
                     <div style={{ marginTop: 10, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
                       {[
-                        ['Referente', g.referente],
-                        ['Membri', g.numero_membri],
-                        ['Email', g.email],
-                        ['Telefono', g.telefono],
-                        ['N. Erezione', g.numero_erezione],
-                        ['N. Aggregazione', g.numero_aggregazione],
-                        ['Aggregato dal', g.data_aggregazione_originale],
-                        ['Rinnovo fino al', g.scadenza],
+                       ['Presidente', g.nome_presidente ? `${g.nome_presidente} ${g.cognome_presidente}` : g.referente],
+['Animatore spirituale', g.nome_animatore ? `${g.nome_animatore} ${g.cognome_animatore}` : '—'],
+['Membri', g.numero_membri],
+['Email', g.email],
+['Telefono', g.telefono],
+['N. Erezione', g.numero_erezione],
+['N. Aggregazione', g.numero_aggregazione],
+['Opera', g.opera],
+['Appartenenza', g.congregazione || g.diocesi || '—'],
+['Aggregato dal', g.data_aggregazione_originale],
+['Rinnovo fino al', g.scadenza],
                       ].map(([label, value]) => (
                         <div key={label as string}>
                           <div style={{ fontSize: 10, color: '#aaa', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{label}</div>
