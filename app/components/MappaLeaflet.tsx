@@ -27,6 +27,7 @@ export default function MappaLeaflet({ groups, myGroupId, searchTerm, onSelectGr
   const mapRef = useRef<any>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const markersRef = useRef<any[]>([])
+  const mapReadyRef = useRef(false)
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return
@@ -55,6 +56,7 @@ export default function MappaLeaflet({ groups, myGroupId, searchTerm, onSelectGr
 
     import('leaflet').then(L => {
       mapRef.current = L.map(containerRef.current!).setView([20, 10], 2)
+      mapReadyRef.current = true
       L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
         attribution: '© OpenStreetMap © CARTO'
       }).addTo(mapRef.current)
@@ -98,7 +100,7 @@ export default function MappaLeaflet({ groups, myGroupId, searchTerm, onSelectGr
   }, [])
 
   useEffect(() => {
-    if (!mapRef.current || groups.length === 0) return
+    if (!mapRef.current || !mapReadyRef.current || groups.length === 0) return
 
     import('leaflet').then(L => {
       markersRef.current.forEach(m => m.remove())
