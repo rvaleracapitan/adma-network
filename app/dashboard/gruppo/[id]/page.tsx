@@ -1,33 +1,33 @@
 'use client'
 import { useEffect, useState } from 'react'
+import { useParams } from 'next/navigation'
 import { supabase } from '../../../../lib/supabase'
 import HeaderADMA from '../../../components/HeaderADMA'
 
 const BLU = '#1A7AB8'
 const AZZURRO = '#29ABE2'
 
-export default function ProfiloGruppo({ params }: { params: { id: string } }) {
+export default function ProfiloGruppo() {
+  const params = useParams()
+  const id = params.id as string
+
   const [group, setGroup] = useState<any>(null)
   const [badges, setBadges] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
 
   useEffect(() => {
+    if (!id) return
     async function load() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { window.location.href = '/'; return; }
-      
-      const id = params.id
-      console.log('Loading group ID:', id)
-      
+
       const { data: g, error } = await supabase
         .from('groups')
         .select('*')
         .eq('id', id)
         .maybeSingle()
-      
-      console.log('Group data:', g, 'Error:', error)
-      
+
       if (!g) { setNotFound(true); setLoading(false); return; }
       setGroup(g)
       const { data: b } = await supabase
@@ -39,7 +39,7 @@ export default function ProfiloGruppo({ params }: { params: { id: string } }) {
       setLoading(false)
     }
     load()
-  }, [params.id])
+  }, [id])
 
   if (loading) return (
     <div style={{ minHeight: '100vh', background: '#F0F7FC' }}>
