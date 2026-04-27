@@ -121,6 +121,7 @@ export default function Profilo() {
               ['Presidente', group?.nome_presidente ? `${group.nome_presidente} ${group.cognome_presidente}` : '—'],
               ['Animatore spirituale', group?.nome_animatore ? `${group.nome_animatore} ${group.cognome_animatore}` : '—'],
               ['Email', group?.email],
+              ['Ispettoria', group?.ispettoria || '—'],
               ['Telefono', group?.telefono || '—'],
             ].map(([label, value]) => (
               <div key={label as string}>

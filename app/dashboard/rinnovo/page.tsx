@@ -14,7 +14,7 @@ export default function Rinnovo() {
   const [form, setForm] = useState({
     referente: '', email: '', telefono: '', numero_membri: '',
     nome_presidente: '', cognome_presidente: '',
-    nome_animatore: '', cognome_animatore: '',
+    nome_animatore: '', cognome_animatore: '', ispettoria: '',
   })
 
   useEffect(() => {
@@ -32,6 +32,7 @@ export default function Rinnovo() {
         cognome_presidente: data?.cognome_presidente || '',
         nome_animatore: data?.nome_animatore || '',
         cognome_animatore: data?.cognome_animatore || '',
+        ispettoria: data?.ispettoria || '',
       })
       setLoading(false)
     }
@@ -63,6 +64,7 @@ export default function Rinnovo() {
       cognome_presidente: form.cognome_presidente,
       nome_animatore: form.nome_animatore,
       cognome_animatore: form.cognome_animatore,
+      ispettoria: form.ispettoria,
     })
     setSending(false)
     setSent(true)
@@ -166,6 +168,10 @@ export default function Rinnovo() {
               <div>
                 <label style={labelStyle}>Numero di membri *</label>
                 <input type="number" style={inputStyle} value={form.numero_membri} onChange={e => setForm({ ...form, numero_membri: e.target.value })} min="1" />
+              </div>
+              <div style={{ marginBottom: '0.8rem' }}>
+                <label style={labelStyle}>Ispettoria</label>
+                <input style={inputStyle} value={form.ispettoria} onChange={e => setForm({ ...form, ispettoria: e.target.value })} placeholder="es. Ispettoria Salesiana Italia Centrale" />
               </div>
             </div>
 

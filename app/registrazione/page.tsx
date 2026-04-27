@@ -17,7 +17,7 @@ export default function Registrazione() {
     opera: '', tipo_appartenenza: '', congregazione: '', diocesi: '',
     nome_presidente: '', cognome_presidente: '',
     nome_animatore: '', cognome_animatore: '',
-    email: '', telefono: '', numero_membri: '',
+    email: '', telefono: '', numero_membri: '', ispettoria: '',
   })
 
   function update(field: string, value: string) {
@@ -54,6 +54,7 @@ export default function Registrazione() {
       ...form,
       referente: `${form.nome_presidente} ${form.cognome_presidente}`,
       numero_membri: form.numero_membri ? parseInt(form.numero_membri) : null,
+      ispettoria: form.ispettoria || null,
       congregazione: form.tipo_appartenenza === 'congregazione' ? form.congregazione : null,
       diocesi: form.tipo_appartenenza === 'diocesi' ? form.diocesi : null,
       diploma_url: diplomaUrl,
@@ -177,6 +178,10 @@ export default function Registrazione() {
               <div>
                 <label style={labelStyle}>Numero di membri *</label>
                 <input type="number" style={inputStyle} value={form.numero_membri} onChange={e => update('numero_membri', e.target.value)} placeholder="es. 30" min="1" />
+              </div>
+              <div style={{ marginBottom: '0.8rem' }}>
+                <label style={labelStyle}>Ispettoria</label>
+                <input style={inputStyle} value={form.ispettoria} onChange={e => update('ispettoria', e.target.value)} placeholder="es. Ispettoria Salesiana Italia Centrale" />
               </div>
             </div>
 
