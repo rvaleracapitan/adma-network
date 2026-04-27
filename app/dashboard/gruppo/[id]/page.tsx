@@ -10,14 +10,31 @@ export default function ProfiloGruppo({ params }: { params: { id: string } }) {
   const [group, setGroup] = useState<any>(null)
   const [badges, setBadges] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [notFound, setNotFound] = useState(false)
 
   useEffect(() => {
     async function load() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { window.location.href = '/'; return; }
-      const { data: g } = await supabase.from('groups').select('*').eq('id', params.id).single()
+      
+      const id = params.id
+      console.log('Loading group ID:', id)
+      
+      const { data: g, error } = await supabase
+        .from('groups')
+        .select('*')
+        .eq('id', id)
+        .maybeSingle()
+      
+      console.log('Group data:', g, 'Error:', error)
+      
+      if (!g) { setNotFound(true); setLoading(false); return; }
       setGroup(g)
-      const { data: b } = await supabase.from('badges').select('*').eq('group_id', params.id).order('anno', { ascending: true })
+      const { data: b } = await supabase
+        .from('badges')
+        .select('*')
+        .eq('group_id', id)
+        .order('anno', { ascending: true })
       setBadges(b || [])
       setLoading(false)
     }
@@ -31,10 +48,13 @@ export default function ProfiloGruppo({ params }: { params: { id: string } }) {
     </div>
   )
 
-  if (!group) return (
+  if (notFound) return (
     <div style={{ minHeight: '100vh', background: '#F0F7FC' }}>
       <HeaderADMA />
-      <div style={{ padding: '2rem', textAlign: 'center', color: '#888' }}>Gruppo non trovato.</div>
+      <div style={{ padding: '2rem', textAlign: 'center' }}>
+        <div style={{ color: '#888', marginBottom: '1rem' }}>Gruppo non trovato.</div>
+        <a href="/dashboard/mappa" style={{ color: BLU, fontSize: 13 }}>← Torna alla mappa</a>
+      </div>
     </div>
   )
 
@@ -51,7 +71,6 @@ export default function ProfiloGruppo({ params }: { params: { id: string } }) {
           <a href="/dashboard/mappa" style={{ fontSize: 13, color: BLU, textDecoration: 'none' }}>← Torna alla mappa</a>
         </div>
 
-        {/* Card identità */}
         <div style={{
           background: `linear-gradient(135deg, ${BLU} 0%, ${AZZURRO} 100%)`,
           borderRadius: 14, padding: '1.75rem',
@@ -91,14 +110,12 @@ export default function ProfiloGruppo({ params }: { params: { id: string } }) {
               background: 'rgba(255,255,255,0.15)',
               color: 'rgba(255,255,255,0.7)',
               padding: '3px 12px', borderRadius: 999, fontSize: 11,
-              border: '0.5px solid rgba(255,255,255,0.2)',
             }}>
               Scadenza: {group?.scadenza || '—'}
             </span>
           </div>
         </div>
 
-        {/* Dati */}
         <div style={{ background: 'white', borderRadius: 12, padding: '1.25rem', marginBottom: '1rem', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
           <div style={{ fontSize: 11, fontWeight: 600, color: BLU, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '1rem', paddingBottom: '0.5rem', borderBottom: `2px solid ${AZZURRO}` }}>
             Dati del gruppo
@@ -125,7 +142,6 @@ export default function ProfiloGruppo({ params }: { params: { id: string } }) {
           </div>
         </div>
 
-        {/* Badge timbri */}
         <div style={{ background: 'white', borderRadius: 12, padding: '1.25rem', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
           <div style={{ fontSize: 11, fontWeight: 600, color: BLU, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4, paddingBottom: '0.5rem', borderBottom: `2px solid ${AZZURRO}` }}>
             Timbri di rinnovo annuale
@@ -134,9 +150,7 @@ export default function ProfiloGruppo({ params }: { params: { id: string } }) {
             Ogni timbro rappresenta un anno di rinnovo confermato nella rete ADMA.
           </div>
           {badges.length === 0 ? (
-            <div style={{ textAlign: 'center', color: '#bbb', fontSize: 13, padding: '1.5rem 0' }}>
-              Nessun timbro ancora.
-            </div>
+            <div style={{ textAlign: 'center', color: '#bbb', fontSize: 13, padding: '1.5rem 0' }}>Nessun timbro ancora.</div>
           ) : (
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14 }}>
               {badges.map(b => (
