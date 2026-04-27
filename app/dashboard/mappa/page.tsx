@@ -147,21 +147,18 @@ export default function Mappa() {
           <span style={{ fontStyle: 'italic' }}>Clicca un gruppo per la chat</span>
         </div>
 
-        {/* Mappa */}
-        {view === 'mappa' && (
-          <div style={{ height: 340, borderRadius: 12, overflow: 'hidden', border: '0.5px solid #dce8f0', marginBottom: '0.75rem', boxShadow: '0 2px 8px rgba(0,0,0,0.07)' }}>
-            <MappaLeaflet
-  groups={groups}
-  myGroupId={myGroup?.id}
-  searchTerm={search}
-  onSelectGroup={(g) => setChatGroup(g)}
-/>
-          </div>
-        )}
+        {/* Mappa — sempre nel DOM */}
+        <div style={{ display: view === 'mappa' ? 'block' : 'none', height: 340, borderRadius: 12, overflow: 'hidden', border: '0.5px solid #dce8f0', marginBottom: '0.75rem', boxShadow: '0 2px 8px rgba(0,0,0,0.07)' }}>
+          <MappaLeaflet
+            groups={groups}
+            myGroupId={myGroup?.id}
+            searchTerm={search}
+            onSelectGroup={(g) => setChatGroup(g)}
+          />
+        </div>
 
         {/* Lista */}
-        {view === 'lista' && (
-          <div style={{ marginTop: '0.25rem' }}>
+        <div style={{ display: view === 'lista' ? 'block' : 'none', marginTop: '0.25rem' }}>
             {filtered.filter(g => !g.is_primaria).map(g => {
               const att = isAttivo(g)
               const isMe = g.id === myGroup?.id
