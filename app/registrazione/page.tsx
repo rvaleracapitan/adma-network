@@ -15,6 +15,10 @@ export default function Registrazione() {
     data_erezione: '',
     numero_aggregazione: '',
     data_aggregazione_originale: '',
+    opera: '',
+    tipo_appartenenza: '',
+    congregazione: '',
+    diocesi: '',
     nome_presidente: '',
     cognome_presidente: '',
     nome_animatore: '',
@@ -38,8 +42,16 @@ export default function Registrazione() {
   }
 
   async function handleSubmit() {
-    if (!form.nome || !form.citta || !form.paese || !form.numero_erezione || !form.data_erezione || !form.numero_aggregazione || !form.data_aggregazione_originale || !form.nome_presidente || !form.cognome_presidente || !form.nome_animatore || !form.cognome_animatore || !form.email || !form.numero_membri) {
+    if (!form.nome || !form.citta || !form.paese || !form.numero_erezione || !form.data_erezione || !form.numero_aggregazione || !form.data_aggregazione_originale || !form.opera || !form.tipo_appartenenza || !form.nome_presidente || !form.cognome_presidente || !form.nome_animatore || !form.cognome_animatore || !form.email || !form.numero_membri) {
       setError('Compila tutti i campi obbligatori (*).')
+      return
+    }
+    if (form.tipo_appartenenza === 'congregazione' && !form.congregazione) {
+      setError('Seleziona la congregazione di appartenenza.')
+      return
+    }
+    if (form.tipo_appartenenza === 'diocesi' && !form.diocesi) {
+      setError('Inserisci la diocesi di appartenenza.')
       return
     }
     setSending(true)
@@ -58,6 +70,10 @@ export default function Registrazione() {
       data_erezione: form.data_erezione,
       numero_aggregazione: form.numero_aggregazione,
       data_aggregazione_originale: form.data_aggregazione_originale,
+      opera: form.opera,
+      tipo_appartenenza: form.tipo_appartenenza,
+      congregazione: form.tipo_appartenenza === 'congregazione' ? form.congregazione : null,
+      diocesi: form.tipo_appartenenza === 'diocesi' ? form.diocesi : null,
       referente: `${form.nome_presidente} ${form.cognome_presidente}`,
       nome_presidente: form.nome_presidente,
       cognome_presidente: form.cognome_presidente,
@@ -78,29 +94,13 @@ export default function Registrazione() {
   }
 
   const inputStyle = {
-    width: '100%',
-    padding: '9px 12px',
-    fontSize: 14,
-    border: '0.5px solid #ddd',
-    borderRadius: 8,
-    boxSizing: 'border-box' as const,
+    width: '100%', padding: '9px 12px', fontSize: 14,
+    border: '0.5px solid #ddd', borderRadius: 8, boxSizing: 'border-box' as const,
   }
-
-  const labelStyle = {
-    display: 'block' as const,
-    fontSize: 13,
-    color: '#888',
-    marginBottom: 4,
-  }
-
+  const labelStyle = { display: 'block' as const, fontSize: 13, color: '#888', marginBottom: 4 }
   const sectionTitle = {
-    fontSize: 11,
-    fontWeight: 500,
-    color: '#888',
-    textTransform: 'uppercase' as const,
-    letterSpacing: '0.05em',
-    marginBottom: '0.6rem',
-    paddingBottom: '0.4rem',
+    fontSize: 11, fontWeight: 500, color: '#888', textTransform: 'uppercase' as const,
+    letterSpacing: '0.05em', marginBottom: '0.6rem', paddingBottom: '0.4rem',
     borderBottom: '0.5px solid #e5e5e5',
   }
 
@@ -154,7 +154,7 @@ export default function Registrazione() {
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: '0.8rem' }}>
                 <div>
                   <label style={labelStyle}>N. di aggregazione *</label>
                   <input style={inputStyle} value={form.numero_aggregazione} onChange={e => update('numero_aggregazione', e.target.value)} placeholder="es. 2024-047" />
@@ -163,6 +163,54 @@ export default function Registrazione() {
                   <label style={labelStyle}>Data di aggregazione *</label>
                   <input type="date" style={inputStyle} value={form.data_aggregazione_originale} onChange={e => update('data_aggregazione_originale', e.target.value)} />
                 </div>
+              </div>
+
+              <div style={{ marginBottom: '0.8rem' }}>
+                <label style={labelStyle}>Opera presso cui il gruppo è eretto *</label>
+                <input style={inputStyle} value={form.opera} onChange={e => update('opera', e.target.value)} placeholder="es. Parrocchia Maria Ausiliatrice" />
+              </div>
+
+              <div style={{ marginBottom: '0.8rem' }}>
+                <label style={labelStyle}>Appartenenza *</label>
+                <div style={{ display: 'flex', gap: 12, marginBottom: form.tipo_appartenenza ? '0.6rem' : 0 }}>
+                  {[
+                    { val: 'congregazione', label: 'Congregazione religiosa' },
+                    { val: 'diocesi', label: 'Diocesi' },
+                  ].map(opt => (
+                    <label key={opt.val} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 14, cursor: 'pointer' }}>
+                      <input
+                        type="radio"
+                        name="tipo_appartenenza"
+                        value={opt.val}
+                        checked={form.tipo_appartenenza === opt.val}
+                        onChange={e => update('tipo_appartenenza', e.target.value)}
+                      />
+                      {opt.label}
+                    </label>
+                  ))}
+                </div>
+
+                {form.tipo_appartenenza === 'congregazione' && (
+                  <div style={{ marginTop: '0.5rem' }}>
+                    <label style={labelStyle}>Congregazione *</label>
+                    <select
+                      style={{ ...inputStyle, background: 'white' }}
+                      value={form.congregazione}
+                      onChange={e => update('congregazione', e.target.value)}
+                    >
+                      <option value="">Seleziona...</option>
+                      <option value="SDB">SDB — Salesiani di Don Bosco</option>
+                      <option value="FMA">FMA — Figlie di Maria Ausiliatrice</option>
+                    </select>
+                  </div>
+                )}
+
+                {form.tipo_appartenenza === 'diocesi' && (
+                  <div style={{ marginTop: '0.5rem' }}>
+                    <label style={labelStyle}>Diocesi *</label>
+                    <input style={inputStyle} value={form.diocesi} onChange={e => update('diocesi', e.target.value)} placeholder="es. Diocesi di Roma" />
+                  </div>
+                )}
               </div>
             </div>
 
@@ -211,53 +259,37 @@ export default function Registrazione() {
               </div>
             </div>
 
-           {/* Documentazione */}
-<div style={{ marginBottom: '1.25rem' }}>
-  <div style={sectionTitle}>Documentazione</div>
-  <label style={labelStyle}>
-    Diploma di aggregazione <span style={{ fontSize: 11, color: '#aaa' }}>(facoltativo · JPG, PNG o PDF)</span>
-  </label>
-  <label style={{
-    display: 'flex',
-    alignItems: 'center',
-    gap: 12,
-    border: diploma ? '0.5px solid #1D9E75' : '1px dashed #ddd',
-    borderRadius: 8,
-    padding: '12px 16px',
-    cursor: 'pointer',
-    background: diploma ? '#EAF3DE' : '#fafafa',
-    marginTop: 4,
-  }}>
-    <div style={{
-      width: 36, height: 36, borderRadius: 8,
-      background: diploma ? '#1D9E75' : '#f0f0ee',
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      fontSize: 18, flexShrink: 0,
-    }}>
-      {diploma ? '✓' : '📎'}
-    </div>
-    <div>
-      <div style={{ fontSize: 13, fontWeight: 500, color: diploma ? '#1D9E75' : '#555' }}>
-        {diploma ? diploma.name : 'Clicca per allegare il diploma'}
-      </div>
-      <div style={{ fontSize: 11, color: '#aaa', marginTop: 2 }}>
-        {diploma ? `${(diploma.size / 1024).toFixed(0)} KB` : 'JPG, PNG o PDF · max 5MB'}
-      </div>
-    </div>
-    <input
-      type="file"
-      accept="image/*,.pdf"
-      onChange={e => setDiploma(e.target.files?.[0] || null)}
-      style={{ display: 'none' }}
-    />
-  </label>
-  {diploma && (
-    <button onClick={() => setDiploma(null)}
-      style={{ background: 'none', border: 'none', color: '#aaa', fontSize: 12, cursor: 'pointer', marginTop: 4, padding: 0 }}>
-      × Rimuovi file
-    </button>
-  )}
-</div>
+            {/* Documentazione */}
+            <div style={{ marginBottom: '1.25rem' }}>
+              <div style={sectionTitle}>Documentazione</div>
+              <label style={labelStyle}>
+                Diploma di aggregazione <span style={{ fontSize: 11, color: '#aaa' }}>(facoltativo · JPG, PNG o PDF)</span>
+              </label>
+              <label style={{
+                display: 'flex', alignItems: 'center', gap: 12,
+                border: diploma ? '0.5px solid #1D9E75' : '1px dashed #ddd',
+                borderRadius: 8, padding: '12px 16px', cursor: 'pointer',
+                background: diploma ? '#EAF3DE' : '#fafafa', marginTop: 4,
+              }}>
+                <div style={{ width: 36, height: 36, borderRadius: 8, background: diploma ? '#1D9E75' : '#f0f0ee', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, flexShrink: 0 }}>
+                  {diploma ? '✓' : '📎'}
+                </div>
+                <div>
+                  <div style={{ fontSize: 13, fontWeight: 500, color: diploma ? '#1D9E75' : '#555' }}>
+                    {diploma ? diploma.name : 'Clicca per allegare il diploma'}
+                  </div>
+                  <div style={{ fontSize: 11, color: '#aaa', marginTop: 2 }}>
+                    {diploma ? `${(diploma.size / 1024).toFixed(0)} KB` : 'JPG, PNG o PDF · max 5MB'}
+                  </div>
+                </div>
+                <input type="file" accept="image/*,.pdf" onChange={e => setDiploma(e.target.files?.[0] || null)} style={{ display: 'none' }} />
+              </label>
+              {diploma && (
+                <button onClick={() => setDiploma(null)} style={{ background: 'none', border: 'none', color: '#aaa', fontSize: 12, cursor: 'pointer', marginTop: 4, padding: 0 }}>
+                  × Rimuovi file
+                </button>
+              )}
+            </div>
 
             <div style={{ background: '#f5f5f3', borderRadius: 8, padding: '0.7rem 0.9rem', fontSize: 12, color: '#888', marginBottom: '1rem' }}>
               Dopo l'approvazione della Primaria riceverete via email le credenziali di accesso. La registrazione sarà valida per 12 mesi.
