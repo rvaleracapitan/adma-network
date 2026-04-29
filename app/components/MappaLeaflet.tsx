@@ -182,7 +182,8 @@ export default function MappaLeaflet({ groups, myGroupId, searchTerm, onSelectGr
               background:${isAttivo ? '#E3F4FC' : '#f0f0ee'};
               color:${isAttivo ? BLU : '#888'};
             ">${isAttivo ? 'Attivo' : 'Non attivo'}</div>
-          <div style="margin-top:8px;"><a href="/dashboard/gruppo/${g.id}" style="display:inline-block;background:#1A7AB8;color:white;padding:4px 12px;border-radius:6px;font-size:11px;text-decoration:none;font-weight:500;">Vedi profilo</a></div>
+          <div style="margin-top:8px;">
+          <div onclick="window.location.href='/dashboard/gruppo/${g.id}'" style="display:inline-block;background:#1A7AB8;color:white;padding:4px 12px;border-radius:6px;font-size:11px;cursor:pointer;font-weight:500;">Vedi profilo</div>
           </div>
         `)
         marker.on('click', () => onSelectGroup(g))
