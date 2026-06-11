@@ -159,7 +159,9 @@ export default function Admin() {
                     ['N. Aggregazione', r.numero_aggregazione],
                     ['Data Aggregazione', r.data_aggregazione_originale],
                     ['Opera', r.opera || '—'],
-                    ['Appartenenza', r.tipo_appartenenza === 'congregazione' ? r.congregazione : r.diocesi || '—'],
+                    ['Tipo appartenenza', r.tipo_appartenenza || '—'],
+                    ['Congregazione', r.congregazione || '—'],
+                    ['Diocesi', r.diocesi || '—'],
                     ['Ispettoria', r.ispettoria || '—'],
                     ['Città', r.citta || '—'],
                     ['Paese', r.paese || '—'],
@@ -170,6 +172,14 @@ export default function Admin() {
                     </div>
                   ))}
                 </div>
+                {r.diploma_url && (
+                  <div style={{ marginBottom: 12 }}>
+                    <div style={{ fontSize: 10, color: '#aaa', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 4 }}>DIPLOMA ALLEGATO</div>
+                    <a href={r.diploma_url} target="_blank" rel="noopener noreferrer" style={{ color: BLU, fontSize: 13, textDecoration: 'underline' }}>
+                      Visualizza diploma →
+                    </a>
+                  </div>
+                )}
                 <div style={{ display: 'flex', gap: 8 }}>
                   <button onClick={() => approvaRegistrazione(r)} style={{ background: BLU, color: 'white', border: 'none', padding: '7px 16px', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
                     Approva e crea account
