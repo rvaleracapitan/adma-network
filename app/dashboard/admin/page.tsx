@@ -30,7 +30,7 @@ export default function Admin() {
       .order('submitted_at', { ascending: false })
     setRegistrazioni(reg || [])
     const { data: rin } = await supabase
-      .from('renewals').select('*, groups(nome, paese, numero_erezione)')
+      .from('renewals').select('*, groups(nome, paese, numero_erezione, opera, congregazione, diocesi, ispettoria)')
       .eq('stato', 'pending').order('submitted_at', { ascending: false })
     setRinnovi(rin || [])
   }
@@ -198,6 +198,13 @@ export default function Admin() {
                     ['Animatore', r.nome_animatore ? `${r.nome_animatore} ${r.cognome_animatore}` : '—'],
                     ['Membri aggiornati', r.numero_membri],
                     ['Email', r.email],
+                    ['Telefono', r.telefono || '—'],
+                    ['Ispettoria', r.ispettoria || '—'],
+                    ['Gruppo', r.groups?.nome],
+                    ['Paese', r.groups?.paese],
+                    ['N. Erezione', r.groups?.numero_erezione],
+                    ['Opera', r.groups?.opera],
+                    ['Appartenenza', r.groups?.congregazione || r.groups?.diocesi || '—'],
                   ].map(([label, value]) => (
                     <div key={label as string}>
                       <div style={{ fontSize: 10, color: '#aaa', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{label}</div>
