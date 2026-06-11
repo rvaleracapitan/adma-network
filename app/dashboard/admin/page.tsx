@@ -153,8 +153,16 @@ export default function Admin() {
                     ['Animatore', r.nome_animatore ? `${r.nome_animatore} ${r.cognome_animatore}` : '—'],
                     ['Membri', r.numero_membri],
                     ['Email', r.email],
+                    ['Telefono', r.telefono || '—'],
                     ['N. Erezione', r.numero_erezione],
+                    ['Data Erezione', r.data_erezione],
                     ['N. Aggregazione', r.numero_aggregazione],
+                    ['Data Aggregazione', r.data_aggregazione_originale],
+                    ['Opera', r.opera || '—'],
+                    ['Appartenenza', r.tipo_appartenenza === 'congregazione' ? r.congregazione : r.diocesi || '—'],
+                    ['Ispettoria', r.ispettoria || '—'],
+                    ['Città', r.citta || '—'],
+                    ['Paese', r.paese || '—'],
                   ].map(([label, value]) => (
                     <div key={label as string}>
                       <div style={{ fontSize: 10, color: '#aaa', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{label}</div>
