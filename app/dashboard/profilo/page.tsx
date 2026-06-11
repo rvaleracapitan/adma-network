@@ -113,16 +113,19 @@ export default function Profilo() {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
             {[
               ['N. di Erezione', group?.numero_erezione],
-              ['N. di aggregazione', group?.numero_aggregazione],
-              ['Data aggregazione', group?.data_aggregazione_originale],
-              ['Opera', group?.opera],
-              ['Appartenenza', group?.congregazione || group?.diocesi || '—'],
-              ['Numero di membri', group?.numero_membri],
+              ['Data Erezione', group?.data_erezione],
+              ['N. di Aggregazione', group?.numero_aggregazione],
+              ['Data Aggregazione', group?.data_aggregazione_originale],
+              ['Opera', group?.opera || '—'],
+              ['Tipo appartenenza', group?.tipo_appartenenza || '—'],
+              ['Congregazione', group?.congregazione || '—'],
+              ['Diocesi', group?.diocesi || '—'],
+              ['Ispettoria', group?.ispettoria || '—'],
               ['Presidente', group?.nome_presidente ? `${group.nome_presidente} ${group.cognome_presidente}` : '—'],
               ['Animatore spirituale', group?.nome_animatore ? `${group.nome_animatore} ${group.cognome_animatore}` : '—'],
-              ['Email', group?.email],
-              ['Ispettoria', group?.ispettoria || '—'],
+              ['Email', group?.email || '—'],
               ['Telefono', group?.telefono || '—'],
+              ['Numero membri', group?.numero_membri || '—'],
             ].map(([label, value]) => (
               <div key={label as string}>
                 <div style={{ fontSize: 10, color: '#aaa', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 2 }}>{label}</div>
