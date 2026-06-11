@@ -202,6 +202,7 @@ export default function Mappa() {
                         ['Email', g.email || '—'],
                         ['Telefono', g.telefono || '—'],
                         ['Numero membri', g.numero_membri || '—'],
+                        ['Diploma', g.diploma_url ? 'Disponibile' : 'Non caricato'],
 ['N. Aggregazione', g.numero_aggregazione],
 ['Opera', g.opera],
 ['Appartenenza', g.congregazione || g.diocesi || '—'],

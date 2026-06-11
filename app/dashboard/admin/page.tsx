@@ -189,6 +189,16 @@ export default function Admin() {
                     </a>
                   </div>
                 )}
+                <div style={{ marginBottom: 12 }}>
+                  <div style={{ fontSize: 10, color: '#aaa', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 4 }}>DIPLOMA ALLEGATO</div>
+                  {r.diploma_url ? (
+                    <a href={r.diploma_url} target="_blank" rel="noopener noreferrer" style={{ color: BLU, fontSize: 13, textDecoration: 'underline' }}>
+                      Visualizza diploma →
+                    </a>
+                  ) : (
+                    <div style={{ fontSize: 13, color: '#aaa' }}>Nessun diploma caricato</div>
+                  )}
+                </div>
                 <div style={{ display: 'flex', gap: 8 }}>
                   <button onClick={() => approvaRegistrazione(r)} style={{ background: BLU, color: 'white', border: 'none', padding: '7px 16px', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
                     Approva e crea account
