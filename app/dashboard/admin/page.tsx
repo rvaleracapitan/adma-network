@@ -149,22 +149,23 @@ export default function Admin() {
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 12 }}>
                   {[
-                    ['Presidente', r.nome_presidente ? `${r.nome_presidente} ${r.cognome_presidente}` : r.referente],
-                    ['Animatore', r.nome_animatore ? `${r.nome_animatore} ${r.cognome_animatore}` : '—'],
-                    ['Membri', r.numero_membri],
-                    ['Email', r.email],
-                    ['Telefono', r.telefono || '—'],
-                    ['N. Erezione', r.numero_erezione],
-                    ['Data Erezione', r.data_erezione],
-                    ['N. Aggregazione', r.numero_aggregazione],
-                    ['Data Aggregazione', r.data_aggregazione_originale],
+                    ['Nome', r.nome || '—'],
+                    ['Città', r.citta || '—'],
+                    ['Paese', r.paese || '—'],
+                    ['N. Erezione', r.numero_erezione || '—'],
+                    ['Data Erezione', r.data_erezione || '—'],
+                    ['N. Aggregazione', r.numero_aggregazione || '—'],
+                    ['Data Aggregazione', r.data_aggregazione_originale || '—'],
                     ['Opera', r.opera || '—'],
                     ['Tipo appartenenza', r.tipo_appartenenza || '—'],
                     ['Congregazione', r.congregazione || '—'],
                     ['Diocesi', r.diocesi || '—'],
+                    ['Presidente', r.nome_presidente ? `${r.nome_presidente} ${r.cognome_presidente}` : '—'],
+                    ['Animatore spirituale', r.nome_animatore ? `${r.nome_animatore} ${r.cognome_animatore}` : '—'],
+                    ['Email', r.email || '—'],
+                    ['Telefono', r.telefono || '—'],
+                    ['Numero membri', r.numero_membri || '—'],
                     ['Ispettoria', r.ispettoria || '—'],
-                    ['Città', r.citta || '—'],
-                    ['Paese', r.paese || '—'],
                   ].map(([label, value]) => (
                     <div key={label as string}>
                       <div style={{ fontSize: 10, color: '#aaa', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{label}</div>
@@ -212,17 +213,18 @@ export default function Admin() {
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 12 }}>
                   {[
+                    ['Nome', r.groups?.nome || '—'],
+                    ['Paese', r.groups?.paese || '—'],
+                    ['N. Erezione', r.groups?.numero_erezione || '—'],
+                    ['Opera', r.groups?.opera || '—'],
+                    ['Congregazione', r.groups?.congregazione || '—'],
+                    ['Diocesi', r.groups?.diocesi || '—'],
+                    ['Ispettoria aggiornata', r.ispettoria || r.groups?.ispettoria || '—'],
                     ['Presidente', r.nome_presidente ? `${r.nome_presidente} ${r.cognome_presidente}` : '—'],
-                    ['Animatore', r.nome_animatore ? `${r.nome_animatore} ${r.cognome_animatore}` : '—'],
-                    ['Membri aggiornati', r.numero_membri],
-                    ['Email', r.email],
+                    ['Animatore spirituale', r.nome_animatore ? `${r.nome_animatore} ${r.cognome_animatore}` : '—'],
+                    ['Email', r.email || '—'],
                     ['Telefono', r.telefono || '—'],
-                    ['Ispettoria', r.ispettoria || '—'],
-                    ['Gruppo', r.groups?.nome],
-                    ['Paese', r.groups?.paese],
-                    ['N. Erezione', r.groups?.numero_erezione],
-                    ['Opera', r.groups?.opera],
-                    ['Appartenenza', r.groups?.congregazione || r.groups?.diocesi || '—'],
+                    ['Numero membri', r.numero_membri || '—'],
                   ].map(([label, value]) => (
                     <div key={label as string}>
                       <div style={{ fontSize: 10, color: '#aaa', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{label}</div>
