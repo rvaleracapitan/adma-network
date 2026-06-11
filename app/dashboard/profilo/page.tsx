@@ -135,7 +135,18 @@ export default function Profilo() {
           </div>
         </div>
 
-        {/* Badge timbri */}
+                  {/* Diploma */}
+          {group?.diploma_url && (
+            <div style={{ background: 'white', borderRadius: 12, padding: '1.25rem', marginBottom: '1rem', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
+              <div style={{ fontSize: 11, fontWeight: 600, color: BLU, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.75rem', paddingBottom: '0.5rem', borderBottom: `2px solid ${AZZURRO}` }}>
+                Diploma di aggregazione
+              </div>
+              <a href={group.diploma_url} target="_blank" rel="noopener noreferrer" style={{ color: BLU, fontSize: 13 }}>
+                Visualizza diploma allegato →
+              </a>
+            </div>
+          )}
+{/* Badge timbri */}
         <div style={{ background: 'white', borderRadius: 12, padding: '1.25rem', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
           <div style={{
             fontSize: 11, fontWeight: 600, color: BLU,
