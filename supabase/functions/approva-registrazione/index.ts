@@ -84,6 +84,7 @@ serve(async (req) => {
       lat: coords?.lat || null,
       lng: coords?.lng || null,
       is_primaria: false,
+      diploma_url: r.diploma_url || null,
     })
 
     await supabase.from('registration_requests')
