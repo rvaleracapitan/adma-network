@@ -44,7 +44,7 @@ export default function Rinnovo() {
   const inizioFinestra = new Date(anno, 0, 1)
   const fineFinestra = new Date(anno, 2, 31)
   const finestraAperta = oggi >= inizioFinestra && oggi <= fineFinestra
-  const haGiaRinnovato = group?.scadenza && new Date(group.scadenza).getFullYear() === anno
+  const haGiaRinnovato = group?.scadenza && group.scadenza === `${anno}-12-31`
   const prossimaFinestra = new Date(anno + 1, 0, 1)
   const giorniAllaProssima = Math.round((prossimaFinestra.getTime() - oggi.getTime()) / 86400000)
 

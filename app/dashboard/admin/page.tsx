@@ -59,7 +59,7 @@ export default function Admin() {
 
   async function approvaRinnovo(r: any) {
     const annoCorrente = new Date().getFullYear()
-    const nuovaScadenza = `${annoCorrente + 1}-03-31`
+   const nuovaScadenza = `${annoCorrente}-12-31`
     await supabase.from('groups').update({
       referente: r.referente, email: r.email, telefono: r.telefono,
       numero_membri: r.numero_membri, nome_presidente: r.nome_presidente,
