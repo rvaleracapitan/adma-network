@@ -216,7 +216,7 @@ export default function Registrazione() {
             </div>
 
             <div style={{ background: '#E3F4FC', borderRadius: 8, padding: '0.75rem 1rem', fontSize: 12, color: BLU, marginBottom: '1.25rem' }}>
-              Dopo l'approvazione della Primaria riceverete via email le credenziali di accesso. La registrazione sarà valida per 12 mesi.
+              Dopo l'approvazione della Primaria riceverete via email le credenziali di accesso. La registrazione sarà valida fino al 31 dicembre dell'anno corrente.
             </div>
 
             <button onClick={handleSubmit} disabled={sending} style={{
