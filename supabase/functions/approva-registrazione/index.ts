@@ -53,12 +53,13 @@ serve(async (req) => {
 
     if (authError) return new Response(JSON.stringify({ error: authError.message }), { status: 400, headers: corsHeaders })
 
-    const scadenza = new Date()
-    scadenza.setFullYear(scadenza.getFullYear() + 1)
+    // Scadenza al 31 dicembre anno corrente
+    const annoCorrente = new Date().getFullYear()
+    const scadenza = `${annoCorrente}-12-31`
 
     const coords = await geocode(r.citta || r.paese, r.paese)
 
-    await supabase.from('groups').insert({
+    const { data: gruppo } = await supabase.from('groups').insert({
       user_id: authData.user.id,
       nome: r.nome,
       paese: r.paese,
@@ -80,12 +81,20 @@ serve(async (req) => {
       email: r.email,
       telefono: r.telefono,
       numero_membri: r.numero_membri,
-      scadenza: scadenza.toISOString().split('T')[0],
+      scadenza: scadenza,
       lat: coords?.lat || null,
       lng: coords?.lng || null,
       is_primaria: false,
       diploma_url: r.diploma_url || null,
-    })
+    }).select().single()
+
+    // Assegna timbro anno corrente
+    if (gruppo) {
+      await supabase.from('badges').insert({
+        group_id: gruppo.id,
+        anno: annoCorrente,
+      })
+    }
 
     await supabase.from('registration_requests')
       .update({ stato: 'approved', reviewed_at: new Date().toISOString() })
