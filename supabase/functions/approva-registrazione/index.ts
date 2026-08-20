@@ -53,7 +53,6 @@ serve(async (req) => {
 
     if (authError) return new Response(JSON.stringify({ error: authError.message }), { status: 400, headers: corsHeaders })
 
-    // Scadenza al 31 dicembre anno corrente
     const annoCorrente = new Date().getFullYear()
     const scadenza = `${annoCorrente}-12-31`
 
@@ -88,7 +87,6 @@ serve(async (req) => {
       diploma_url: r.diploma_url || null,
     }).select().single()
 
-    // Assegna timbro anno corrente
     if (gruppo) {
       await supabase.from('badges').insert({
         group_id: gruppo.id,
