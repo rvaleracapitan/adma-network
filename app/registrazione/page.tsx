@@ -27,9 +27,9 @@ export default function Registrazione() {
   async function uploadDiploma(file: File, nomeGruppo: string): Promise<string | null> {
     const estensione = file.name.split('.').pop()
     const path = `${nomeGruppo.replace(/\s+/g, '-').toLowerCase()}-${Date.now()}.${estensione}`
-    const { error } = await supabase.storage.from('Diplomi').upload(path, file)
+    const { error } = await supabase.storage.from('diplomi').upload(path, file)
     if (error) { console.error('Upload error:', error); return null }
-    const { data } = supabase.storage.from('Diplomi').getPublicUrl(path)
+    const { data } = supabase.storage.from('diplomi').getPublicUrl(path)
     return data.publicUrl
   }
 
