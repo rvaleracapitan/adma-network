@@ -49,13 +49,12 @@ export default function HeaderADMA() {
         <span style={{
           fontSize: 12, color: 'rgba(255,255,255,0.3)',
           cursor: 'not-allowed',
-          textDecoration: 'line-through',
         }}>
           Rinnovo
         </span>
         <button
           onClick={async () => { await supabase.auth.signOut(); window.location.href = '/' }}
-          style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', background: 'none', border: 'none', cursor: 'pointer' }}
+          style={{ fontSize: 12, color: 'rgba(255,255,255,0.8)', background: 'none', border: 'none', cursor: 'pointer' }}
         >
           Esci
         </button>
