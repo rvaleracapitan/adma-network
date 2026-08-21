@@ -38,11 +38,12 @@ export default function Admin() {
   async function presaInCarico(id: string) {
     const operatore = prompt('Inserisci il tuo nome per prendere in carico questa richiesta:')
     if (!operatore) return
-    await supabase.from('registration_requests').update({
+    const { error } = await supabase.from('registration_requests').update({
       stato: 'in_lavorazione',
       operatore: operatore,
       presa_in_carico_at: new Date().toISOString(),
     }).eq('id', id)
+    if (error) { alert('Errore: ' + error.message); return; }
     await loadData()
   }
 
