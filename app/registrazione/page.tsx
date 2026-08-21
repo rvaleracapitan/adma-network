@@ -1,5 +1,6 @@
 'use client'
 import { useState } from 'react'
+import { Turnstile } from '@marsidev/react-turnstile'
 import { supabase } from '../../lib/supabase'
 
 const BLU = '#1A7AB8'
@@ -7,6 +8,7 @@ const AZZURRO = '#29ABE2'
 
 export default function Registrazione() {
   const [sending, setSending] = useState(false)
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null)
   const [sent, setSent] = useState(false)
   const [error, setError] = useState('')
   const [diploma, setDiploma] = useState<File | null>(null)
@@ -44,6 +46,10 @@ export default function Registrazione() {
     }
     if (form.tipo_appartenenza === 'diocesi' && !form.diocesi) {
       setError('Inserisci la diocesi di appartenenza.')
+      return
+    }
+    if (!captchaToken) {
+      setError('Completa la verifica di sicurezza.')
       return
     }
     setSending(true)
@@ -226,6 +232,16 @@ export default function Registrazione() {
             }}>
               {sending ? 'Invio in corso...' : 'INVIA RICHIESTA DI REGISTRAZIONE'}
             </button>
+            <Turnstile
+              siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+              onSuccess={(token) => setCaptchaToken(token)}
+              onExpire={() => setCaptchaToken(null)}
+              style={{ marginBottom: '1rem' }}
+            />
+            <div style={{ marginTop: '1rem', fontSize: 11, color: '#aaa', lineHeight: 1.6 }}>
+              Inviando questo modulo acconsenti al trattamento dei tuoi dati personali da parte dell'Associazione di Maria Ausiliatrice (ADMA) - Primaria di Valdocco, Torino, ai sensi del Regolamento UE 2016/679 (GDPR). I dati raccolti saranno utilizzati esclusivamente per la gestione della rete mondiale dei gruppi ADMA e non saranno ceduti a terzi. Hai diritto di accesso, rettifica e cancellazione dei tuoi dati scrivendo a{' '}
+              <a href="mailto:primaria@admadonbosco.org" style={{ color: '#1A7AB8' }}>primaria@admadonbosco.org</a>.
+            </div>
 
             <div style={{ textAlign: 'center', marginTop: '1rem', fontSize: 13, color: '#888' }}>
               Hai già un account?{' '}

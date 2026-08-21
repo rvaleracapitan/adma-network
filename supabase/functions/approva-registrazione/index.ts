@@ -32,7 +32,7 @@ serve(async (req) => {
     }
 
     // 2. Crea utente auth
-    const tempPassword = 'ADMA' + Math.random().toString(36).slice(2, 8).toUpperCase() + '!'
+    const tempPassword = 'Adma!2026'
     const { data: authData, error: e2 } = await supabase.auth.admin.createUser({
       email: r.email,
       password: tempPassword,
