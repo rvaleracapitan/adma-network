@@ -16,11 +16,10 @@ export default function HeaderADMA() {
   }, [])
 
   const navLinks = [
-    { href: '/dashboard/mappa', label: 'Mappa' },
     { href: '/dashboard/profilo', label: 'Profilo' },
-    { href: '/dashboard/messaggi', label: 'Messaggi' },
-    { href: '/dashboard/rinnovo', label: 'Rinnovo' },
     { href: '/dashboard/password', label: 'Password' },
+    { href: '/dashboard/messaggi', label: 'Messaggi' },
+    { href: '/dashboard/mappa', label: 'Mappa' },
     ...(myGroup?.is_primaria ? [{ href: '/dashboard/admin', label: 'Admin' }] : []),
   ]
 
@@ -47,6 +46,13 @@ export default function HeaderADMA() {
             {l.label}
           </a>
         ))}
+        <span style={{
+          fontSize: 12, color: 'rgba(255,255,255,0.3)',
+          cursor: 'not-allowed',
+          textDecoration: 'line-through',
+        }}>
+          Rinnovo
+        </span>
         <button
           onClick={async () => { await supabase.auth.signOut(); window.location.href = '/' }}
           style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', background: 'none', border: 'none', cursor: 'pointer' }}
