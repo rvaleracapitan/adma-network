@@ -69,6 +69,8 @@ export default function Registrazione() {
       congregazione: form.tipo_appartenenza === 'congregazione' ? form.congregazione : null,
       diocesi: form.tipo_appartenenza === 'diocesi' ? form.diocesi : null,
       diploma_url: diplomaUrl,
+      gdpr_accepted: true,
+      gdpr_accepted_at: new Date().toISOString(),
     })
     if (error) { setError('Errore durante l\'invio. Riprova.'); setSending(false); return; }
     setSent(true)
