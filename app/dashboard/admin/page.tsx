@@ -26,13 +26,33 @@ export default function Admin() {
 
   async function loadData() {
     const { data: reg } = await supabase
-      .from('registration_requests').select('*').eq('stato', 'pending')
+      .from('registration_requests').select('*').in('stato', ['pending', 'in_lavorazione'])
       .order('submitted_at', { ascending: false })
     setRegistrazioni(reg || [])
     const { data: rin } = await supabase
       .from('renewals').select('*, groups(nome, paese, numero_erezione, opera, congregazione, diocesi, ispettoria)')
       .eq('stato', 'pending').order('submitted_at', { ascending: false })
     setRinnovi(rin || [])
+  }
+
+  async function presaInCarico(id: string) {
+    const operatore = prompt('Inserisci il tuo nome per prendere in carico questa richiesta:')
+    if (!operatore) return
+    await supabase.from('registration_requests').update({
+      stato: 'in_lavorazione',
+      operatore: operatore,
+      presa_in_carico_at: new Date().toISOString(),
+    }).eq('id', id)
+    await loadData()
+  }
+
+  async function rilasciaInCarico(id: string) {
+    await supabase.from('registration_requests').update({
+      stato: 'pending',
+      operatore: null,
+      presa_in_carico_at: null,
+    }).eq('id', id)
+    await loadData()
   }
 
   async function approvaRegistrazione(r: any) {
@@ -143,9 +163,16 @@ export default function Admin() {
                     <div style={{ fontSize: 15, fontWeight: 600, color: BLU }}>{r.nome}</div>
                     <div style={{ fontSize: 12, color: '#888' }}>{r.paese}{r.citta ? ` · ${r.citta}` : ''} · {new Date(r.submitted_at).toLocaleDateString('it-IT')}</div>
                   </div>
-                  <span style={{ background: '#FAEEDA', color: '#854F0B', padding: '2px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500 }}>
-                    Prima registrazione
-                  </span>
+                  <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                    <span style={{ background: '#FAEEDA', color: '#854F0B', padding: '2px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500 }}>
+                      Prima registrazione
+                    </span>
+                    {r.stato === 'in_lavorazione' && (
+                      <span style={{ background: '#E3F4FC', color: BLU, padding: '2px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500 }}>
+                        In lavorazione: {r.operatore}
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 12 }}>
                   {[
@@ -184,10 +211,20 @@ export default function Admin() {
                     <div style={{ fontSize: 13, color: '#aaa' }}>Nessun diploma caricato</div>
                   )}
                 </div>
-                <div style={{ display: 'flex', gap: 8 }}>
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                   <button onClick={() => approvaRegistrazione(r)} style={{ background: BLU, color: 'white', border: 'none', padding: '7px 16px', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
                     Approva e crea account
                   </button>
+                  {r.stato === 'pending' && (
+                    <button onClick={() => presaInCarico(r.id)} style={{ background: '#F0F7FC', color: BLU, border: `0.5px solid ${BLU}`, padding: '7px 16px', borderRadius: 8, fontSize: 13, cursor: 'pointer' }}>
+                      Prendi in carico
+                    </button>
+                  )}
+                  {r.stato === 'in_lavorazione' && (
+                    <button onClick={() => rilasciaInCarico(r.id)} style={{ background: '#F0F7FC', color: '#888', border: '0.5px solid #ccc', padding: '7px 16px', borderRadius: 8, fontSize: 13, cursor: 'pointer' }}>
+                      Rilascia
+                    </button>
+                  )}
                   <button onClick={() => rifiutaRegistrazione(r.id)} style={{ background: 'none', color: '#E24B4A', border: '0.5px solid #E24B4A', padding: '7px 16px', borderRadius: 8, fontSize: 13, cursor: 'pointer' }}>
                     Rifiuta
                   </button>
