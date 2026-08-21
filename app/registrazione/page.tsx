@@ -233,7 +233,7 @@ export default function Registrazione() {
               {sending ? 'Invio in corso...' : 'INVIA RICHIESTA DI REGISTRAZIONE'}
             </button>
             <Turnstile
-              siteKey="1x00000000000000000000AA"
+              siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
               onSuccess={(token) => setCaptchaToken(token)}
               onExpire={() => setCaptchaToken(null)}
               style={{ marginBottom: '1rem' }}
