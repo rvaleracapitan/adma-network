@@ -9,6 +9,7 @@ const AZZURRO = '#29ABE2'
 export default function Registrazione() {
   const [sending, setSending] = useState(false)
   const [captchaToken, setCaptchaToken] = useState<string | null>(null)
+  const [gdprAccepted, setGdprAccepted] = useState(false)
   const [sent, setSent] = useState(false)
   const [error, setError] = useState('')
   const [diploma, setDiploma] = useState<File | null>(null)
@@ -46,6 +47,10 @@ export default function Registrazione() {
     }
     if (form.tipo_appartenenza === 'diocesi' && !form.diocesi) {
       setError('Inserisci la diocesi di appartenenza.')
+      return
+    }
+    if (!gdprAccepted) {
+      setError('Devi accettare il trattamento dei dati personali per procedere.')
       return
     }
     if (!captchaToken) {
@@ -238,10 +243,18 @@ export default function Registrazione() {
               onExpire={() => setCaptchaToken(null)}
               style={{ marginBottom: '1rem' }}
             />
-            <div style={{ marginTop: '1rem', fontSize: 11, color: '#aaa', lineHeight: 1.6 }}>
-              Inviando questo modulo acconsenti al trattamento dei tuoi dati personali da parte dell'Associazione di Maria Ausiliatrice (ADMA) - Primaria di Valdocco, Torino, ai sensi del Regolamento UE 2016/679 (GDPR). I dati raccolti saranno utilizzati esclusivamente per la gestione della rete mondiale dei gruppi ADMA e non saranno ceduti a terzi. Hai diritto di accesso, rettifica e cancellazione dei tuoi dati scrivendo a{' '}
-              <a href="mailto:primaria@admadonbosco.org" style={{ color: '#1A7AB8' }}>primaria@admadonbosco.org</a>.
-            </div>
+            <label style={{ display: 'flex', alignItems: 'flex-start', gap: 10, cursor: 'pointer', marginBottom: '1rem' }}>
+              <input
+                type="checkbox"
+                checked={gdprAccepted}
+                onChange={e => setGdprAccepted(e.target.checked)}
+                style={{ marginTop: 3, flexShrink: 0, width: 16, height: 16, cursor: 'pointer' }}
+              />
+              <span style={{ fontSize: 11, color: '#666', lineHeight: 1.6 }}>
+                Ho preso visione e acconsento al trattamento dei miei dati personali da parte dell'Associazione di Maria Ausiliatrice (ADMA) - Primaria di Valdocco, Torino, ai sensi del Regolamento UE 2016/679 (GDPR). I dati raccolti saranno utilizzati esclusivamente per la gestione della rete mondiale dei gruppi ADMA e non saranno ceduti a terzi. Hai diritto di accesso, rettifica e cancellazione dei tuoi dati scrivendo a{' '}
+                <a href="mailto:primaria@admadonbosco.org" style={{ color: '#1A7AB8' }}>primaria@admadonbosco.org</a>. *
+              </span>
+            </label>
 
             <div style={{ textAlign: 'center', marginTop: '1rem', fontSize: 13, color: '#888' }}>
               Hai già un account?{' '}
