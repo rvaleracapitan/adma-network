@@ -19,7 +19,7 @@ export default function HeaderADMA() {
     { href: '/dashboard/profilo', label: 'Profilo' },
     { href: '/dashboard/password', label: 'Password' },
     { href: '/dashboard/messaggi', label: 'Messaggi' },
-    { href: '/dashboard/mappa', label: 'Mappa' },
+    { href: '/dashboard/mappa', label: 'Esplora' },
     ...(myGroup?.is_primaria ? [{ href: '/dashboard/admin', label: 'Admin' }] : []),
   ]
 
