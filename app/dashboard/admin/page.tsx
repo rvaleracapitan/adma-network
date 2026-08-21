@@ -11,6 +11,9 @@ export default function Admin() {
   const [rinnovi, setRinnovi] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [tab, setTab] = useState<'registrazioni' | 'rinnovi'>('registrazioni')
+  const [filtroStato, setFiltroStato] = useState<string>('tutti')
+  const [filtroOperatore, setFiltroOperatore] = useState<string>('')
+  const [selectedReg, setSelectedReg] = useState<any>(null)
 
   useEffect(() => {
     async function check() {
@@ -154,27 +157,145 @@ export default function Admin() {
         {/* Registrazioni */}
         {tab === 'registrazioni' && (
           <div>
-            {registrazioni.length === 0 && (
-              <div style={{ textAlign: 'center', color: '#888', fontSize: 14, padding: '3rem' }}>Nessuna richiesta in attesa.</div>
-            )}
-            {registrazioni.map(r => (
-              <div key={r.id} style={cardStyle}>
-                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 10 }}>
-                  <div>
-                    <div style={{ fontSize: 15, fontWeight: 600, color: BLU }}>{r.nome}</div>
-                    <div style={{ fontSize: 12, color: '#888' }}>{r.paese}{r.citta ? ` · ${r.citta}` : ''} · {new Date(r.submitted_at).toLocaleDateString('it-IT')}</div>
-                  </div>
-                  <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-                    <span style={{ background: '#FAEEDA', color: '#854F0B', padding: '2px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500 }}>
-                      Prima registrazione
-                    </span>
-                    {r.stato === 'in_lavorazione' && (
-                      <span style={{ background: '#E3F4FC', color: BLU, padding: '2px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500 }}>
-                        In lavorazione: {r.operatore}
+            {/* Filtri */}
+            <div style={{ display: 'flex', gap: 8, marginBottom: '1rem', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', background: 'white', borderRadius: 8, padding: 3, border: '0.5px solid #dce8f0' }}>
+                {[
+                  { val: 'tutti', label: 'Tutti' },
+                  { val: 'pending', label: 'In attesa' },
+                  { val: 'in_lavorazione', label: 'In lavorazione' },
+                ].map(f => (
+                  <button key={f.val} onClick={() => setFiltroStato(f.val)} style={{
+                    padding: '5px 12px', fontSize: 12,
+                    background: filtroStato === f.val ? BLU : 'none',
+                    color: filtroStato === f.val ? 'white' : '#888',
+                    border: 'none', borderRadius: 6, cursor: 'pointer',
+                  }}>{f.label}</button>
+                ))}
+              </div>
+              <input
+                value={filtroOperatore}
+                onChange={e => setFiltroOperatore(e.target.value)}
+                placeholder="Filtra per operatore..."
+                style={{ padding: '6px 12px', fontSize: 13, border: '0.5px solid #dce8f0', borderRadius: 8, background: 'white', outline: 'none' }}
+              />
+            </div>
+
+            <div style={{ display: 'flex', gap: 12 }}>
+              {/* Tabella */}
+              <div style={{ flex: 1, background: 'white', borderRadius: 12, overflow: 'hidden', border: '0.5px solid #dce8f0', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
+                {/* Header tabella */}
+                <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr', gap: 8, padding: '0.6rem 1rem', background: '#F0F7FC', borderBottom: '0.5px solid #dce8f0' }}>
+                  {['Nome / Paese', 'Data invio', 'Stato', 'Operatore', 'Azioni'].map(h => (
+                    <div key={h} style={{ fontSize: 10, fontWeight: 600, color: '#888', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{h}</div>
+                  ))}
+                </div>
+
+                {registrazioni
+                  .filter(r => filtroStato === 'tutti' || r.stato === filtroStato)
+                  .filter(r => !filtroOperatore || (r.operatore || '').toLowerCase().includes(filtroOperatore.toLowerCase()))
+                  .length === 0 && (
+                  <div style={{ textAlign: 'center', color: '#888', fontSize: 14, padding: '3rem' }}>Nessuna richiesta trovata.</div>
+                )}
+
+                {registrazioni
+                  .filter(r => filtroStato === 'tutti' || r.stato === filtroStato)
+                  .filter(r => !filtroOperatore || (r.operatore || '').toLowerCase().includes(filtroOperatore.toLowerCase()))
+                  .map(r => (
+                  <div key={r.id} onClick={() => setSelectedReg(selectedReg?.id === r.id ? null : r)} style={{
+                    display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr', gap: 8,
+                    padding: '0.75rem 1rem', borderBottom: '0.5px solid #f0f0ee',
+                    cursor: 'pointer',
+                    background: selectedReg?.id === r.id ? '#E3F4FC' : 'white',
+                    transition: 'background 0.1s',
+                  }}>
+                    <div>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: BLU }}>{r.nome}</div>
+                      <div style={{ fontSize: 11, color: '#888' }}>{r.paese}{r.citta ? ` · ${r.citta}` : ''}</div>
+                    </div>
+                    <div style={{ fontSize: 12, color: '#555', alignSelf: 'center' }}>
+                      {new Date(r.submitted_at).toLocaleDateString('it-IT')}
+                    </div>
+                    <div style={{ alignSelf: 'center' }}>
+                      <span style={{
+                        padding: '2px 8px', borderRadius: 999, fontSize: 11, fontWeight: 500,
+                        background: r.stato === 'in_lavorazione' ? '#E3F4FC' : '#FAEEDA',
+                        color: r.stato === 'in_lavorazione' ? BLU : '#854F0B',
+                      }}>
+                        {r.stato === 'in_lavorazione' ? 'In lavorazione' : 'In attesa'}
                       </span>
+                    </div>
+                    <div style={{ fontSize: 12, color: '#555', alignSelf: 'center' }}>
+                      {r.operatore || '—'}
+                    </div>
+                    <div style={{ display: 'flex', gap: 4, alignSelf: 'center' }} onClick={e => e.stopPropagation()}>
+                      {r.stato === 'pending' && (
+                        <button onClick={() => presaInCarico(r.id)} style={{ background: '#F0F7FC', color: BLU, border: `0.5px solid ${BLU}`, padding: '3px 8px', borderRadius: 6, fontSize: 11, cursor: 'pointer' }}>
+                          Prendi
+                        </button>
+                      )}
+                      {r.stato === 'in_lavorazione' && (
+                        <button onClick={() => rilasciaInCarico(r.id)} style={{ background: '#f0f0ee', color: '#888', border: '0.5px solid #ccc', padding: '3px 8px', borderRadius: 6, fontSize: 11, cursor: 'pointer' }}>
+                          Rilascia
+                        </button>
+                      )}
+                      <button onClick={() => approvaRegistrazione(r)} style={{ background: BLU, color: 'white', border: 'none', padding: '3px 8px', borderRadius: 6, fontSize: 11, cursor: 'pointer' }}>
+                        Approva
+                      </button>
+                      <button onClick={() => rifiutaRegistrazione(r.id)} style={{ background: 'none', color: '#E24B4A', border: '0.5px solid #E24B4A', padding: '3px 8px', borderRadius: 6, fontSize: 11, cursor: 'pointer' }}>
+                        Rifiuta
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Pannello dettaglio */}
+              {selectedReg && (
+                <div style={{ width: 320, background: 'white', borderRadius: 12, border: '0.5px solid #dce8f0', boxShadow: '0 1px 4px rgba(0,0,0,0.06)', padding: '1.25rem', flexShrink: 0, overflowY: 'auto', maxHeight: 600 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: BLU }}>{selectedReg.nome}</div>
+                    <button onClick={() => setSelectedReg(null)} style={{ background: 'none', border: 'none', fontSize: 18, color: '#aaa', cursor: 'pointer' }}>×</button>
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 10 }}>
+                    {[
+                      ['Nome', selectedReg.nome],
+                      ['Città', selectedReg.citta],
+                      ['Paese', selectedReg.paese],
+                      ['N. Erezione', selectedReg.numero_erezione],
+                      ['Data Erezione', selectedReg.data_erezione],
+                      ['N. Aggregazione', selectedReg.numero_aggregazione],
+                      ['Data Aggregazione', selectedReg.data_aggregazione_originale],
+                      ['Opera', selectedReg.opera],
+                      ['Tipo appartenenza', selectedReg.tipo_appartenenza],
+                      ['Congregazione', selectedReg.congregazione],
+                      ['Diocesi', selectedReg.diocesi],
+                      ['Ispettoria', selectedReg.ispettoria],
+                      ['Presidente', selectedReg.nome_presidente ? `${selectedReg.nome_presidente} ${selectedReg.cognome_presidente}` : '—'],
+                      ['Animatore spirituale', selectedReg.nome_animatore ? `${selectedReg.nome_animatore} ${selectedReg.cognome_animatore}` : '—'],
+                      ['Email', selectedReg.email],
+                      ['Telefono', selectedReg.telefono],
+                      ['Numero membri', selectedReg.numero_membri],
+                    ].map(([label, value]) => (
+                      <div key={label as string}>
+                        <div style={{ fontSize: 10, color: '#aaa', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{label}</div>
+                        <div style={{ fontSize: 13, color: '#333' }}>{value || '—'}</div>
+                      </div>
+                    ))}
+                    {selectedReg.diploma_url && (
+                      <div>
+                        <div style={{ fontSize: 10, color: '#aaa', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 4 }}>DIPLOMA</div>
+                        <a href={selectedReg.diploma_url} target="_blank" rel="noopener noreferrer" style={{ color: BLU, fontSize: 13 }}>
+                          Visualizza diploma →
+                        </a>
+                      </div>
                     )}
                   </div>
                 </div>
+              )}
+            </div>
+          </div>
+        )}
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 12 }}>
                   {[
                     ['Nome', r.nome || '—'],
