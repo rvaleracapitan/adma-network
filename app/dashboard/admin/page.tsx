@@ -296,65 +296,6 @@ export default function Admin() {
             </div>
           </div>
         )}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 12 }}>
-                  {[
-                    ['Nome', r.nome || '—'],
-                    ['Città', r.citta || '—'],
-                    ['Paese', r.paese || '—'],
-                    ['N. Erezione', r.numero_erezione || '—'],
-                    ['Data Erezione', r.data_erezione || '—'],
-                    ['N. Aggregazione', r.numero_aggregazione || '—'],
-                    ['Data Aggregazione', r.data_aggregazione_originale || '—'],
-                    ['Opera', r.opera || '—'],
-                    ['Tipo appartenenza', r.tipo_appartenenza || '—'],
-                    ['Congregazione', r.congregazione || '—'],
-                    ['Diocesi', r.diocesi || '—'],
-                    ['Presidente', r.nome_presidente ? `${r.nome_presidente} ${r.cognome_presidente}` : '—'],
-                    ['Animatore spirituale', r.nome_animatore ? `${r.nome_animatore} ${r.cognome_animatore}` : '—'],
-                    ['Email', r.email || '—'],
-                    ['Telefono', r.telefono || '—'],
-                    ['Numero membri', r.numero_membri || '—'],
-                    ['Ispettoria', r.ispettoria || '—'],
-                  ].map(([label, value]) => (
-                    <div key={label as string}>
-                      <div style={{ fontSize: 10, color: '#aaa', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{label}</div>
-                      <div style={{ fontSize: 13, color: '#333' }}>{value || '—'}</div>
-                    </div>
-                  ))}
-                </div>
-
-                <div style={{ marginBottom: 12 }}>
-                  <div style={{ fontSize: 10, color: '#aaa', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 4 }}>DIPLOMA ALLEGATO</div>
-                  {r.diploma_url ? (
-                    <a href={r.diploma_url} target="_blank" rel="noopener noreferrer" style={{ color: BLU, fontSize: 13, textDecoration: 'underline' }}>
-                      Visualizza diploma →
-                    </a>
-                  ) : (
-                    <div style={{ fontSize: 13, color: '#aaa' }}>Nessun diploma caricato</div>
-                  )}
-                </div>
-                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                  <button onClick={() => approvaRegistrazione(r)} style={{ background: BLU, color: 'white', border: 'none', padding: '7px 16px', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
-                    Approva e crea account
-                  </button>
-                  {r.stato === 'pending' && (
-                    <button onClick={() => presaInCarico(r.id)} style={{ background: '#F0F7FC', color: BLU, border: `0.5px solid ${BLU}`, padding: '7px 16px', borderRadius: 8, fontSize: 13, cursor: 'pointer' }}>
-                      Prendi in carico
-                    </button>
-                  )}
-                  {r.stato === 'in_lavorazione' && (
-                    <button onClick={() => rilasciaInCarico(r.id)} style={{ background: '#F0F7FC', color: '#888', border: '0.5px solid #ccc', padding: '7px 16px', borderRadius: 8, fontSize: 13, cursor: 'pointer' }}>
-                      Rilascia
-                    </button>
-                  )}
-                  <button onClick={() => rifiutaRegistrazione(r.id)} style={{ background: 'none', color: '#E24B4A', border: '0.5px solid #E24B4A', padding: '7px 16px', borderRadius: 8, fontSize: 13, cursor: 'pointer' }}>
-                    Rifiuta
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
 
         {/* Rinnovi */}
         {tab === 'rinnovi' && (
