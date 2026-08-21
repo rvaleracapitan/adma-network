@@ -173,22 +173,7 @@ export default function Admin() {
                     </div>
                   ))}
                 </div>
-                {r.diploma_url && (
-                  <div style={{ marginBottom: 12 }}>
-                    <div style={{ fontSize: 10, color: '#aaa', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 4 }}>DIPLOMA ALLEGATO</div>
-                    <a href={r.diploma_url} target="_blank" rel="noopener noreferrer" style={{ color: BLU, fontSize: 13, textDecoration: 'underline' }}>
-                      Visualizza diploma →
-                    </a>
-                  </div>
-                )}
-                {r.diploma_url && (
-                  <div style={{ marginBottom: 12 }}>
-                    <div style={{ fontSize: 10, color: '#aaa', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 4 }}>DIPLOMA ALLEGATO</div>
-                    <a href={r.diploma_url} target="_blank" rel="noopener noreferrer" style={{ color: BLU, fontSize: 13, textDecoration: 'underline' }}>
-                      Visualizza diploma →
-                    </a>
-                  </div>
-                )}
+
                 <div style={{ marginBottom: 12 }}>
                   <div style={{ fontSize: 10, color: '#aaa', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 4 }}>DIPLOMA ALLEGATO</div>
                   {r.diploma_url ? (
