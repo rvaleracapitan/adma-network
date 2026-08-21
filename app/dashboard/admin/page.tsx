@@ -121,6 +121,7 @@ export default function Admin() {
   }
 
   return (
+    <>
     <div style={{ minHeight: '100vh', background: '#F0F7FC' }}>
       <HeaderADMA />
       <div style={{ maxWidth: 700, margin: '0 auto', padding: '1.5rem 1rem' }}>
@@ -185,6 +186,9 @@ export default function Admin() {
               {/* Tabella */}
               <div style={{ flex: 1, background: 'white', borderRadius: 12, overflow: 'hidden', border: '0.5px solid #dce8f0', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
                 {/* Header tabella */}
+                <div style={{ padding: '0.4rem 1rem', background: '#fffbea', borderBottom: '0.5px solid #dce8f0', fontSize: 11, color: '#888' }}>
+                  Doppio click su una riga per vedere il dettaglio completo
+                </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr', gap: 8, padding: '0.6rem 1rem', background: '#F0F7FC', borderBottom: '0.5px solid #dce8f0' }}>
                   {['Nome / Paese', 'Data invio', 'Stato', 'Operatore', 'Azioni'].map(h => (
                     <div key={h} style={{ fontSize: 10, fontWeight: 600, color: '#888', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{h}</div>
@@ -202,7 +206,7 @@ export default function Admin() {
                   .filter(r => filtroStato === 'tutti' || r.stato === filtroStato)
                   .filter(r => !filtroOperatore || (r.operatore || '').toLowerCase().includes(filtroOperatore.toLowerCase()))
                   .map(r => (
-                  <div key={r.id} onClick={() => setSelectedReg(selectedReg?.id === r.id ? null : r)} style={{
+                  <div key={r.id} onDoubleClick={() => setSelectedReg(r)} style={{
                     display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr', gap: 8,
                     padding: '0.75rem 1rem', borderBottom: '0.5px solid #f0f0ee',
                     cursor: 'pointer',
@@ -250,49 +254,7 @@ export default function Admin() {
                 ))}
               </div>
 
-              {/* Pannello dettaglio */}
-              {selectedReg && (
-                <div style={{ width: 320, background: 'white', borderRadius: 12, border: '0.5px solid #dce8f0', boxShadow: '0 1px 4px rgba(0,0,0,0.06)', padding: '1.25rem', flexShrink: 0, overflowY: 'auto', maxHeight: 600 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: BLU }}>{selectedReg.nome}</div>
-                    <button onClick={() => setSelectedReg(null)} style={{ background: 'none', border: 'none', fontSize: 18, color: '#aaa', cursor: 'pointer' }}>×</button>
-                  </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 10 }}>
-                    {[
-                      ['Nome', selectedReg.nome],
-                      ['Città', selectedReg.citta],
-                      ['Paese', selectedReg.paese],
-                      ['N. Erezione', selectedReg.numero_erezione],
-                      ['Data Erezione', selectedReg.data_erezione],
-                      ['N. Aggregazione', selectedReg.numero_aggregazione],
-                      ['Data Aggregazione', selectedReg.data_aggregazione_originale],
-                      ['Opera', selectedReg.opera],
-                      ['Tipo appartenenza', selectedReg.tipo_appartenenza],
-                      ['Congregazione', selectedReg.congregazione],
-                      ['Diocesi', selectedReg.diocesi],
-                      ['Ispettoria', selectedReg.ispettoria],
-                      ['Presidente', selectedReg.nome_presidente ? `${selectedReg.nome_presidente} ${selectedReg.cognome_presidente}` : '—'],
-                      ['Animatore spirituale', selectedReg.nome_animatore ? `${selectedReg.nome_animatore} ${selectedReg.cognome_animatore}` : '—'],
-                      ['Email', selectedReg.email],
-                      ['Telefono', selectedReg.telefono],
-                      ['Numero membri', selectedReg.numero_membri],
-                    ].map(([label, value]) => (
-                      <div key={label as string}>
-                        <div style={{ fontSize: 10, color: '#aaa', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{label}</div>
-                        <div style={{ fontSize: 13, color: '#333' }}>{value || '—'}</div>
-                      </div>
-                    ))}
-                    {selectedReg.diploma_url && (
-                      <div>
-                        <div style={{ fontSize: 10, color: '#aaa', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 4 }}>DIPLOMA</div>
-                        <a href={selectedReg.diploma_url} target="_blank" rel="noopener noreferrer" style={{ color: BLU, fontSize: 13 }}>
-                          Visualizza diploma →
-                        </a>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
+
             </div>
           </div>
         )}
@@ -349,5 +311,97 @@ export default function Admin() {
         )}
       </div>
     </div>
+
+    {/* Modale dettaglio registrazione */}
+    {selectedReg && (
+      <div style={{
+        position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+        background: 'rgba(0,0,0,0.5)', zIndex: 1000,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        padding: '1rem',
+      }} onClick={() => setSelectedReg(null)}>
+        <div style={{
+          background: 'white', borderRadius: 16, padding: '1.75rem',
+          maxWidth: 600, width: '100%', maxHeight: '85vh',
+          overflowY: 'auto', boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+        }} onClick={e => e.stopPropagation()}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', paddingBottom: '0.75rem', borderBottom: `2px solid ${AZZURRO}` }}>
+            <div>
+              <div style={{ fontSize: 18, fontWeight: 700, color: BLU }}>{selectedReg.nome}</div>
+              <div style={{ fontSize: 13, color: '#888' }}>{selectedReg.citta}, {selectedReg.paese}</div>
+            </div>
+            <button onClick={() => setSelectedReg(null)} style={{ background: 'none', border: 'none', fontSize: 24, color: '#aaa', cursor: 'pointer' }}>×</button>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.25rem' }}>
+            <div>
+              <div style={{ fontSize: 11, fontWeight: 600, color: BLU, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.75rem' }}>Dati identificativi</div>
+              {[
+                ['N. Erezione', selectedReg.numero_erezione],
+                ['Data Erezione', selectedReg.data_erezione],
+                ['N. Aggregazione', selectedReg.numero_aggregazione],
+                ['Data Aggregazione', selectedReg.data_aggregazione_originale],
+                ['Opera', selectedReg.opera],
+                ['Tipo appartenenza', selectedReg.tipo_appartenenza],
+                ['Congregazione', selectedReg.congregazione],
+                ['Diocesi', selectedReg.diocesi],
+                ['Ispettoria', selectedReg.ispettoria],
+              ].map(([label, value]) => (
+                <div key={label as string} style={{ marginBottom: 8 }}>
+                  <div style={{ fontSize: 10, color: '#aaa', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{label}</div>
+                  <div style={{ fontSize: 13, color: '#333' }}>{value || '—'}</div>
+                </div>
+              ))}
+            </div>
+            <div>
+              <div style={{ fontSize: 11, fontWeight: 600, color: BLU, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.75rem' }}>Responsabili e contatti</div>
+              {[
+                ['Presidente', selectedReg.nome_presidente ? `${selectedReg.nome_presidente} ${selectedReg.cognome_presidente}` : '—'],
+                ['Animatore spirituale', selectedReg.nome_animatore ? `${selectedReg.nome_animatore} ${selectedReg.cognome_animatore}` : '—'],
+                ['Email', selectedReg.email],
+                ['Telefono', selectedReg.telefono],
+                ['Numero membri', selectedReg.numero_membri],
+              ].map(([label, value]) => (
+                <div key={label as string} style={{ marginBottom: 8 }}>
+                  <div style={{ fontSize: 10, color: '#aaa', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{label}</div>
+                  <div style={{ fontSize: 13, color: '#333' }}>{value || '—'}</div>
+                </div>
+              ))}
+              {selectedReg.diploma_url && (
+                <div style={{ marginTop: 8 }}>
+                  <div style={{ fontSize: 10, color: '#aaa', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 4 }}>DIPLOMA</div>
+                  <a href={selectedReg.diploma_url} target="_blank" rel="noopener noreferrer" style={{ color: BLU, fontSize: 13 }}>
+                    Visualizza diploma →
+                  </a>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: 8, paddingTop: '1rem', borderTop: '0.5px solid #eee' }}>
+            {selectedReg.stato === 'pending' && (
+              <button onClick={() => { presaInCarico(selectedReg.id); setSelectedReg(null); }} style={{ background: '#F0F7FC', color: BLU, border: `0.5px solid ${BLU}`, padding: '8px 16px', borderRadius: 8, fontSize: 13, cursor: 'pointer' }}>
+                Prendi in carico
+              </button>
+            )}
+            {selectedReg.stato === 'in_lavorazione' && (
+              <button onClick={() => { rilasciaInCarico(selectedReg.id); setSelectedReg(null); }} style={{ background: '#f0f0ee', color: '#888', border: '0.5px solid #ccc', padding: '8px 16px', borderRadius: 8, fontSize: 13, cursor: 'pointer' }}>
+                Rilascia
+              </button>
+            )}
+            <button onClick={() => { approvaRegistrazione(selectedReg); setSelectedReg(null); }} style={{ background: BLU, color: 'white', border: 'none', padding: '8px 16px', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
+              Approva e crea account
+            </button>
+            <button onClick={() => { rifiutaRegistrazione(selectedReg.id); setSelectedReg(null); }} style={{ background: 'none', color: '#E24B4A', border: '0.5px solid #E24B4A', padding: '8px 16px', borderRadius: 8, fontSize: 13, cursor: 'pointer' }}>
+              Rifiuta
+            </button>
+            <button onClick={() => setSelectedReg(null)} style={{ background: 'none', color: '#888', border: '0.5px solid #ccc', padding: '8px 16px', borderRadius: 8, fontSize: 13, cursor: 'pointer', marginLeft: 'auto' }}>
+              Chiudi
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+    </>
   )
 }
