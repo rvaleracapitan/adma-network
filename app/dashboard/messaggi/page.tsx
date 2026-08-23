@@ -54,7 +54,19 @@ export default function Messaggi() {
         console.log('Realtime status:', status)
       })
 
-    return () => { supabase.removeChannel(channel) }
+    // Polling ogni 3 secondi come fallback
+    const interval = setInterval(async () => {
+      const me = myGroupRef.current
+      const sel = selectedRef.current
+      if (!me) return
+      await loadConversazioni(me.id)
+      if (sel) await loadMessages(me.id, sel.group.id)
+    }, 3000)
+
+    return () => { 
+      supabase.removeChannel(channel)
+      clearInterval(interval)
+    }
   }, [])
 
   useEffect(() => {
