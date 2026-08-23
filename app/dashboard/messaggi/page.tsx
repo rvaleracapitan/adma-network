@@ -110,6 +110,7 @@ export default function Messaggi() {
     })
     if (error) { console.error('Errore invio:', error.message); return; }
     setNewMsg('')
+    await loadMessages(me.id, sel.group.id)
   }
 
   async function cercaGruppo(q: string) {
