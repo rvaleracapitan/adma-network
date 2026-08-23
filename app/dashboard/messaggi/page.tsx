@@ -47,7 +47,9 @@ export default function Messaggi() {
           await loadMessages(me.id, sel.group.id)
         }
       })
-      .subscribe()
+      .subscribe((status) => {
+        console.log('Realtime status:', status)
+      })
 
     return () => { supabase.removeChannel(channel) }
   }, [])
