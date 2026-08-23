@@ -119,6 +119,7 @@ export default function Messaggi() {
       content: newMsg.trim()
     })
     if (error) { console.error('Errore invio:', error.message); return; }
+    console.log('Messaggio inviato - me.id:', me.id, 'sel.group.id:', sel.group.id)
     setNewMsg('')
     await loadMessages(me.id, sel.group.id)
   }
