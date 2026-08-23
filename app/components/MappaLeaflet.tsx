@@ -81,6 +81,9 @@ export default function MappaLeaflet({ groups, myGroupId, searchTerm, onSelectGr
               style="width:100%;height:90px;object-fit:cover;border-radius:6px;margin-bottom:8px;"/>
             <div style="font-weight:700;color:${BLU};font-size:13px;">ADMA Primaria</div>
             <div style="font-size:11px;color:#888;margin-top:2px;">Basilica di Maria Ausiliatrice<br>Valdocco, Torino</div>
+            <div style="margin-top:8px;">
+              <div onclick="window.location.href='/dashboard/gruppo/db63a336-875a-4ad3-9b1c-0aff4765976c'" style="display:inline-block;background:#1A7AB8;color:white;padding:4px 12px;border-radius:6px;font-size:11px;cursor:pointer;font-weight:500;">Vedi profilo</div>
+            </div>
           </div>
         `)
 

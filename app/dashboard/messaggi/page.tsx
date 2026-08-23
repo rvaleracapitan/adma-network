@@ -120,7 +120,6 @@ export default function Messaggi() {
     if (q.length < 2) { setRisultatiRicerca([]); return; }
     const { data } = await supabase.from('groups')
       .select('id, nome, paese, citta')
-      .eq('is_primaria', false)
       .neq('id', myGroup?.id)
       .or(`nome.ilike.%${q}%,paese.ilike.%${q}%,citta.ilike.%${q}%`)
       .limit(8)
