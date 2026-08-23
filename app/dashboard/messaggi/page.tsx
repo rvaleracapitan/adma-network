@@ -35,16 +35,19 @@ export default function Messaggi() {
     const channel = supabase
       .channel('messaggi-realtime')
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, async (payload) => {
-        console.log('Realtime messaggio ricevuto:', payload.new)
         const me = myGroupRef.current
         const sel = selectedRef.current
-        console.log('myGroup:', me?.nome, 'selected:', sel?.group?.nome)
         if (!me) return
-        // Aggiorna conversazioni
+        // Aggiorna lista conversazioni
         await loadConversazioni(me.id)
-        // Aggiorna sempre i messaggi se c'è una conversazione aperta
+        // Se il messaggio coinvolge la conversazione aperta aggiungilo direttamente
         if (sel) {
-          await loadMessages(me.id, sel.group.id)
+          const msg = payload.new as any
+          const coinvolge = (msg.from_group_id === me.id && msg.to_group_id === sel.group.id) ||
+                           (msg.from_group_id === sel.group.id && msg.to_group_id === me.id)
+          if (coinvolge) {
+            setMessages(prev => [...prev, msg])
+          }
         }
       })
       .subscribe((status) => {
