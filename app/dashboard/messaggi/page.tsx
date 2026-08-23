@@ -99,12 +99,16 @@ export default function Messaggi() {
   }
 
   async function sendMessage() {
-    if (!newMsg.trim() || !selected || !myGroup) return
-    await supabase.from('messages').insert({
-      from_group_id: myGroup.id,
-      to_group_id: selected.group.id,
+    if (!newMsg.trim()) return
+    const me = myGroupRef.current
+    const sel = selectedRef.current
+    if (!me || !sel) { console.error('myGroup o selected null', me, sel); return; }
+    const { error } = await supabase.from('messages').insert({
+      from_group_id: me.id,
+      to_group_id: sel.group.id,
       content: newMsg.trim()
     })
+    if (error) { console.error('Errore invio:', error.message); return; }
     setNewMsg('')
   }
 
