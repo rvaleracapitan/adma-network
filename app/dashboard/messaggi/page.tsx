@@ -42,15 +42,9 @@ export default function Messaggi() {
         if (!me) return
         // Aggiorna conversazioni
         await loadConversazioni(me.id)
-        // Se il messaggio coinvolge me e il gruppo selezionato aggiorna i messaggi
+        // Aggiorna sempre i messaggi se c'è una conversazione aperta
         if (sel) {
-          const msgFromMe = payload.new.from_group_id === me.id
-          const msgToMe = payload.new.to_group_id === me.id
-          const msgFromSel = payload.new.from_group_id === sel.group.id
-          const msgToSel = payload.new.to_group_id === sel.group.id
-          if ((msgFromMe && msgToSel) || (msgFromSel && msgToMe)) {
-            await loadMessages(me.id, sel.group.id)
-          }
+          await loadMessages(me.id, sel.group.id)
         }
       })
       .subscribe((status) => {
