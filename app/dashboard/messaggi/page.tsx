@@ -59,8 +59,15 @@ export default function Messaggi() {
       const me = myGroupRef.current
       const sel = selectedRef.current
       if (!me) return
+      // Se c'è una conversazione aperta marca i messaggi come letti prima di ricaricare
+      if (sel) {
+        await supabase.from('messages').update({ read: true })
+          .eq('to_group_id', me.id)
+          .eq('from_group_id', sel.group.id)
+          .eq('read', false)
+        await loadMessages(me.id, sel.group.id)
+      }
       await loadConversazioni(me.id)
-      if (sel) await loadMessages(me.id, sel.group.id)
     }, 3000)
 
     return () => { 
