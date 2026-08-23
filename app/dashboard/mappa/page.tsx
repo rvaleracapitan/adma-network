@@ -25,7 +25,7 @@ export default function Mappa() {
       if (!user) { window.location.href = '/'; return; }
       const { data: me } = await supabase.from('groups').select('*').eq('user_id', user.id).single()
       setMyGroup(me)
-      const { data: all } = await supabase.from('groups').select('*').eq('is_primaria', false)
+      const { data: all } = await supabase.from('groups').select('*')
       setGroups(all || [])
     }
     load()
@@ -34,7 +34,7 @@ export default function Mappa() {
       if (document.visibilityState === 'visible') {
         supabase.auth.getUser().then(({ data: { user } }) => {
           if (!user) return
-          supabase.from('groups').select('*').eq('is_primaria', false).then(({ data }) => setGroups(data || []))
+          supabase.from('groups').select('*').then(({ data }) => setGroups(data || []))
           supabase.from('groups').select('*').eq('user_id', user.id).single().then(({ data }) => setMyGroup(data))
         })
       }
@@ -159,7 +159,7 @@ export default function Mappa() {
 
         {/* Lista */}
         <div style={{ display: view === 'lista' ? 'block' : 'none', marginTop: '0.25rem' }}>
-            {filtered.filter(g => !g.is_primaria).map(g => {
+            {filtered.map(g => {
               const att = isAttivo(g)
               const isMe = g.id === myGroup?.id
               return (
