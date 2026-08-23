@@ -1,124 +1,67 @@
 'use client'
-import { useState } from 'react'
+import { useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 
-export default function Home() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+const BLU = '#1A7AB8'
+const AZZURRO = '#29ABE2'
 
-  async function handleLogin() {
-    setLoading(true)
-    setError('')
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
-    if (error) {
-      setError('Email o password non corretti.')
-      setLoading(false)
-      return
-    }
-    window.location.href = '/dashboard/profilo'
-    setLoading(false)
-  }
+export default function Home() {
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) window.location.href = '/dashboard/profilo'
+    })
+  }, [])
 
   return (
     <main style={{
       minHeight: '100vh',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      background: 'linear-gradient(160deg, #E8F4FC 0%, #F0F7FC 60%, #ffffff 100%)',
-      padding: '1.5rem',
+      background: 'linear-gradient(160deg, #0D5C8C 0%, #1A7AB8 60%, #29ABE2 100%)',
+      display: 'flex', flexDirection: 'column',
+      alignItems: 'center', justifyContent: 'center',
+      padding: '2rem',
     }}>
-
-      <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-        <img src="/adma-logo.png" alt="ADMA Logo" style={{ width: 180, margin: '0 auto 12px', display: 'block' }} />
-        <div style={{ fontSize: 12, color: '#888', letterSpacing: '0.08em' }}>
-          Rete mondiale dei gruppi aggregati · Primaria Valdocco
-        </div>
+      <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
+        <img src="/adma-logo.png" alt="ADMA" style={{ width: 160, display: 'block', margin: '0 auto 1rem', filter: 'brightness(0) invert(1)' }} />
+        <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', letterSpacing: '0.08em' }}>RETE MONDIALE DEI GRUPPI AGGREGATI</div>
+        <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', marginTop: 4 }}>Primaria di Valdocco · Torino</div>
       </div>
 
-      <div style={{
-        width: '100%', maxWidth: 380,
-        background: 'white',
-        border: '0.5px solid #dce8f0',
-        borderRadius: 16,
-        padding: '1.75rem',
-        boxShadow: '0 4px 20px rgba(26,122,184,0.08)',
-      }}>
-        {error && (
-          <div style={{
-            background: '#FCEBEB',
-            border: '0.5px solid #F7C1C1',
-            color: '#A32D2D',
-            borderRadius: 8, padding: '0.6rem 0.85rem',
-            fontSize: 13, marginBottom: '1rem'
-          }}>
-            {error}
+      <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', justifyContent: 'center', marginBottom: '2.5rem', maxWidth: 700, width: '100%' }}>
+        <div style={{ flex: 1, minWidth: 260, maxWidth: 320, background: 'rgba(255,255,255,0.12)', border: '1.5px solid rgba(255,255,255,0.3)', borderRadius: 16, padding: '2rem', textAlign: 'center', cursor: 'pointer' }}
+          onClick={() => window.location.href = '/login'}>
+          <div style={{ fontSize: 36, marginBottom: 12 }}>🔑</div>
+          <div style={{ fontSize: 18, fontWeight: 700, color: 'white', marginBottom: 8 }}>Sei già registrato?</div>
+          <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.75)', marginBottom: 20, lineHeight: 1.6 }}>
+            Accedi con le credenziali del tuo gruppo per entrare nella rete ADMA
           </div>
-        )}
-        <div style={{ marginBottom: '1rem' }}>
-          <label style={{ display: 'block', fontSize: 12, color: '#888', marginBottom: 6, letterSpacing: '0.05em' }}>
-            EMAIL DEL GRUPPO
-          </label>
-          <input
-            type="email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            placeholder="email@esempio.com"
-            style={{
-              width: '100%', padding: '10px 14px', fontSize: 14,
-              background: '#F8FBFD',
-              border: '0.5px solid #dce8f0',
-              borderRadius: 8, color: '#333',
-              boxSizing: 'border-box' as const, outline: 'none',
-            }}
-          />
+          <div style={{ background: 'white', color: BLU, padding: '10px 24px', borderRadius: 8, fontSize: 14, fontWeight: 700, display: 'inline-block' }}>
+            ACCEDI
+          </div>
         </div>
-        <div style={{ marginBottom: '1.5rem' }}>
-          <label style={{ display: 'block', fontSize: 12, color: '#888', marginBottom: 6, letterSpacing: '0.05em' }}>
-            PASSWORD
-          </label>
-          <input
-            type="password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            placeholder="••••••••"
-            onKeyDown={e => e.key === 'Enter' && handleLogin()}
-            style={{
-              width: '100%', padding: '10px 14px', fontSize: 14,
-              background: '#F8FBFD',
-              border: '0.5px solid #dce8f0',
-              borderRadius: 8, color: '#333',
-              boxSizing: 'border-box' as const, outline: 'none',
-            }}
-          />
+
+        <div style={{ flex: 1, minWidth: 260, maxWidth: 320, background: 'rgba(255,255,255,0.12)', border: '1.5px solid rgba(255,255,255,0.3)', borderRadius: 16, padding: '2rem', textAlign: 'center', cursor: 'pointer' }}
+          onClick={() => window.location.href = '/registrazione'}>
+          <div style={{ fontSize: 36, marginBottom: 12 }}>✨</div>
+          <div style={{ fontSize: 18, fontWeight: 700, color: 'white', marginBottom: 8 }}>Nuovo gruppo?</div>
+          <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.75)', marginBottom: 20, lineHeight: 1.6 }}>
+            Registra il tuo gruppo al network ADMA e unisciti alla rete mondiale
+          </div>
+          <div style={{ background: 'rgba(255,255,255,0.2)', color: 'white', border: '1.5px solid rgba(255,255,255,0.5)', padding: '10px 24px', borderRadius: 8, fontSize: 14, fontWeight: 700, display: 'inline-block' }}>
+            REGISTRATI
+          </div>
         </div>
-        <button
-          onClick={handleLogin}
-          disabled={loading}
-          style={{
-            width: '100%',
-            background: loading ? '#93C8E8' : '#1A7AB8',
-            color: 'white',
-            border: 'none', padding: '11px', borderRadius: 8,
-            fontSize: 14, fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer',
-            letterSpacing: '0.05em',
-          }}
-        >
-          {loading ? 'Accesso in corso...' : 'ACCEDI'}
-        </button>
       </div>
 
-      <div style={{ textAlign: 'center', marginTop: '1.25rem', fontSize: 13, color: '#888' }}>
-        Gruppo non registrato nel network?{' '}
-        <a href="/registrazione" style={{ color: '#1A7AB8', fontWeight: 600, textDecoration: 'none' }}>
-          Richiedi registrazione
-        </a>
+      <div style={{ maxWidth: 620, textAlign: 'center', background: 'rgba(255,255,255,0.08)', border: '0.5px solid rgba(255,255,255,0.2)', borderRadius: 12, padding: '1.5rem' }}>
+        <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.85)', lineHeight: 1.8 }}>
+          La registrazione al Network ADMA è disponibile per tutti i gruppi <strong style={{ color: 'white' }}>regolarmente eretti</strong> e <strong style={{ color: 'white' }}>regolarmente aggregati alla Primaria</strong> che abbiano già il diploma di aggregazione.
+        </div>
+        <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', lineHeight: 1.8, marginTop: 10 }}>
+          Grazie alla registrazione al Network il tuo gruppo potrà entrare a far parte della rete ADMA mondiale, rimanere in contatto con la Primaria e con tutti gli altri gruppi del mondo e ricevere il <strong style={{ color: 'white' }}>badge annuale di rinnovo</strong>.
+        </div>
       </div>
 
-      <div style={{ marginTop: '3rem', fontSize: 11, color: '#bbb', textAlign: 'center' }}>
+      <div style={{ marginTop: '2rem', fontSize: 11, color: 'rgba(255,255,255,0.3)', textAlign: 'center' }}>
         Fondato da Don Bosco il 18 aprile 1869 · Basilica di Maria Ausiliatrice, Valdocco, Torino
       </div>
     </main>
