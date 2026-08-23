@@ -260,7 +260,7 @@ export default function Registrazione() {
 
             <div style={{ textAlign: 'center', marginTop: '1rem', fontSize: 13, color: '#888' }}>
               Hai già un account?{' '}
-              <a href="/" style={{ color: BLU, fontWeight: 600, textDecoration: 'none' }}>Accedi</a>
+              <a href="/login" style={{ color: BLU, fontWeight: 600, textDecoration: 'none' }}>Accedi</a>
             </div>
           </div>
         ) : (
@@ -272,7 +272,7 @@ export default function Registrazione() {
               Riceverete le credenziali di accesso via email una volta approvata.
             </div>
             <div style={{ marginTop: '1.5rem' }}>
-              <a href="/" style={{ color: BLU, fontSize: 13, fontWeight: 600, textDecoration: 'none' }}>← Torna al login</a>
+              <a href="/login" style={{ color: BLU, fontSize: 13, fontWeight: 600, textDecoration: 'none' }}>← Torna al login</a>
             </div>
           </div>
         )}
