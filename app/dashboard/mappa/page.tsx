@@ -214,14 +214,7 @@ export default function Mappa() {
                           <div style={{ fontSize: 13, color: '#333', marginTop: 1 }}>{value || '—'}</div>
                         </div>
                       ))}
-                      {!isMe && att && (
-                        <div style={{ gridColumn: '1/-1', marginTop: 4 }}>
-                          <button onClick={e => { e.stopPropagation(); setChatGroup(g); setView('mappa') }}
-                            style={{ background: BLU, color: 'white', border: 'none', padding: '5px 14px', borderRadius: 7, fontSize: 12, cursor: 'pointer' }}>
-                            Apri chat
-                          </button>
-                        </div>
-                      )}
+
                     </div>
                   )}
                 </div>
