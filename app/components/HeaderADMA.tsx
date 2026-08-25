@@ -18,6 +18,7 @@ export default function HeaderADMA() {
   const navLinks = [
     { href: '/dashboard/profilo', label: 'Profilo' },
     { href: '/dashboard/password', label: 'Password' },
+    { href: '/dashboard/messaggi', label: 'Messaggi' },
 
     { href: '/dashboard/mappa', label: 'Esplora' },
     ...(myGroup?.is_primaria ? [{ href: '/dashboard/admin', label: 'Admin' }] : []),
